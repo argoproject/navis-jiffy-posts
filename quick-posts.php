@@ -36,6 +36,11 @@ class Navis_Quick_Posts {
 
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
 
+        add_action( 'save_post', array( &$this, 'save_post' ) );
+        add_filter( 'wp_insert_post_data', 
+            array( &$this, 'insert_post_content' ) 
+        );
+
         add_action( 'admin_menu', array( &$this, 'add_options_page' ) );
     }
 
@@ -56,7 +61,7 @@ class Navis_Quick_Posts {
                 'not_found_in_trash' => 'No quick posts found in Trash',
             ),
             'description' => 'Quick Posts',
-            'supports' => array( 'title', 'editor', 'comments', 'author' ),
+            'supports' => array( 'title', 'comments', 'author' ),
             'public' => true,
             'menu_position' => 6,
             'taxonomies' => array(),
@@ -81,13 +86,19 @@ class Navis_Quick_Posts {
         wp_enqueue_script( 'navis-quick-posts-admin', $oursrc, 
             array( 'jquery-embedly' ), '0.1' 
         );
+
     }
 
 
     function add_post_meta_boxes() {
         add_meta_box( 'navisembedurl', 'Embed a URL', 
             array( &$this, 'embed_url_box' ), 'quickpost', 
-            'side', 'core' 
+            'normal', 'high' 
+        );
+
+        add_meta_box( 'navisleadin', 'Lead in text',
+            array( &$this, 'embed_leadin_box' ), 'quickpost', 
+            'normal', 'high' 
         );
 
         add_meta_box( 'navisembedpreview', 'Preview Embed',
@@ -97,19 +108,71 @@ class Navis_Quick_Posts {
     }
 
 
-    function embed_url_box() {
+    function embed_url_box( $post ) {
+        $navis_embed_url = get_post_meta( $post->ID, '_navis_embed_url', true );
     ?>
-        URL: <input type="text" name="navis_embed_url" id="navis_embed_url" value="" style="width: 80%;" />
+        URL: <input type="text" name="navis_embed_url" id="navis_embed_url" value="<?php echo $navis_embed_url; ?>" style="width: 80%;" />
         <input type="button" class="button" id="submitUrl" value="Embed" label="Embed" />
     <?php
     }
 
 
     function embed_preview_box() {
+        $leadintext = get_post_meta( $post->ID, '_leadintext', true );
     ?>
-        <div id="embedlyPreviewArea"></div>
+        <p id="leadinPreviewArea"><?php echo $leadintext; ?></p>
+        <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
+        <input type="hidden" id="embedlyarea" name="embedlyarea" value="" />
+    <?php
+        $navis_embed_url = get_post_meta( $post->ID, '_navis_embed_url', true );
+        if ( $navis_embed_url ) {
+    ?>
+            <!-- script language="javascript">handleEmbedly( '<?php echo esc_url( $navis_embed_url ); ?>' ); alert( 'awesome!!' );</script -->
+    <?php
+        }
+    }
+
+
+    function embed_leadin_box( $post ) {
+        $leadintext = get_post_meta( $post->ID, '_leadintext', true );
+    ?>
+        <textarea id="leadintext" name="leadintext" style="width: 98%"><?php echo $leadintext; ?></textarea>
     <?php
     }
+
+
+    function save_post( $post_id ) {
+        if ( isset( $_POST[ 'navis_embed_url' ] ) ) {
+            update_post_meta( $post_id, '_navis_embed_url', 
+                $_POST[ 'navis_embed_url' ] 
+            );
+        }
+
+        if ( isset( $_POST[ 'leadintext' ] ) ) {
+            update_post_meta( $post_id, '_leadintext', $_POST[ 'leadintext' ] );
+        }
+
+        if ( isset( $_POST[ 'embedlyarea' ] ) ) {
+            update_post_meta( $post_id, '_embedlyarea', $_POST[ 'embedlyarea' ] );
+            $content .= $_POST[ 'embedlyarea' ];
+        }
+    }
+
+
+    function insert_post_content( $data, $postarr ) {
+        $content = '';
+        if ( isset( $_POST[ 'leadintext' ] ) ) {
+            $content = '<p>' . $_POST[ 'leadintext' ] . '</p>';
+        }
+
+        if ( isset( $_POST[ 'embedlyarea' ] ) ) {
+            $content .= $_POST[ 'embedlyarea' ];
+        }
+
+        $data[ 'post_content' ] = $content;
+        return $data;
+    }
+
 
     function add_options_page() {
         add_options_page( 'Quick Posts', 'Quick Posts', 'manage_options',

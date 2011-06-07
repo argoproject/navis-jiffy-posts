@@ -44,11 +44,10 @@ function renderPhotoOembed( oembed ) {
     return html;
 }
 
-
 jQuery( document ).ready( function() {
     var $ = jQuery;
-    $( '#submitUrl' ).click( function( evt ) {
-        var url = $( '#navis_embed_url' ).val();
+
+    function handleEmbedly( url ) {
         var key = '6097efc282fa11e088ae4040f9f86dcd';
         $.embedly( url, {maxWidth: 620, key: key}, function( oembed, dict ) {
             // Set the title. Focus & blur necessary to wipe out 
@@ -60,10 +59,29 @@ jQuery( document ).ready( function() {
             html = buildHtmlFromOembed( oembed );
 
             // Add the embed to the TinyMCE visual editor
-            window.send_to_editor( html );
+            //window.send_to_editor( html );
 
             // Also, show a preview of the output
             $( '#embedlyPreviewArea' ).html( html );
+            $( '#embedlyarea' ).val( html );
         });
+    }
+
+    if ( $( '#navis_embed_url' ).val() ) {
+        var url = $( '#navis_embed_url' ).val();
+        handleEmbedly( url );
+    }
+
+    if ( $( '#leadintext' ).val() ) {
+        $( '#leadinPreviewArea' ).html( $( '#leadintext' ).val() );
+    }
+
+    $( '#submitUrl' ).click( function( evt ) {
+        var url = $( '#navis_embed_url' ).val();
+        handleEmbedly( url );
+    });
+
+    $( '#leadintext' ).keyup( function() {
+        $( '#leadinPreviewArea' ).html( $(this).val() );
     });
 });
