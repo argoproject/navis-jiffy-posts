@@ -1,3 +1,5 @@
+var EMBEDLY_API_KEY;
+
 function buildHtmlFromOembed( oembed ) {
     var html = '';
     
@@ -48,8 +50,17 @@ jQuery( document ).ready( function() {
     var $ = jQuery;
 
     function handleEmbedly( url ) {
-        var key = '6097efc282fa11e088ae4040f9f86dcd';
-        $.embedly( url, {maxWidth: 620, key: key}, function( oembed, dict ) {
+        var opts = {};
+        if ( EMBEDLY_API_KEY ) {
+            opts[ 'key' ] = EMBEDLY_API_KEY;
+        }
+        if ( MAX_EMBED_WIDTH ) {
+            opts[ 'maxWidth' ] = MAX_EMBED_WIDTH;
+        }
+        if ( MAX_EMBED_HEIGHT ) {
+            opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
+        }
+        $.embedly( url, opts, function( oembed, dict ) {
             // Set the title. Focus & blur necessary to wipe out 
             // default "Enter title here" text
             $( '#title' ).val( oembed.title );

@@ -25,7 +25,18 @@
 
 class Navis_Quick_Posts {
     function __construct() {
+        add_action( 'init', array( $this, 'init' ) );
         add_action( 'init', array( &$this, 'register_post_type' ) );
+    }
+
+
+    function init() {
+        add_action( 'admin_head-post.php', 
+            array( &$this, 'provide_embedly_config' )
+        );
+        add_action( 'admin_head-post-new.php', 
+            array( &$this, 'provide_embedly_config' )
+        );
 
         add_action( 'admin_print_scripts-post.php', 
             array( &$this, 'register_admin_scripts' )
@@ -41,6 +52,7 @@ class Navis_Quick_Posts {
             array( &$this, 'insert_post_content' ) 
         );
 
+        add_action( 'admin_init', array( &$this, 'init_settings' ) );
         add_action( 'admin_menu', array( &$this, 'add_options_page' ) );
     }
 
@@ -124,12 +136,6 @@ class Navis_Quick_Posts {
         <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
         <input type="hidden" id="embedlyarea" name="embedlyarea" value="" />
     <?php
-        $navis_embed_url = get_post_meta( $post->ID, '_navis_embed_url', true );
-        if ( $navis_embed_url ) {
-    ?>
-            <!-- script language="javascript">handleEmbedly( '<?php echo esc_url( $navis_embed_url ); ?>' ); alert( 'awesome!!' );</script -->
-    <?php
-        }
     }
 
 
@@ -159,7 +165,7 @@ class Navis_Quick_Posts {
     }
 
 
-    function insert_post_content( $data, $postarr ) {
+    function insert_post_content( $data ) {
         $content = '';
         if ( isset( $_POST[ 'leadintext' ] ) ) {
             $content = '<p>' . $_POST[ 'leadintext' ] . '</p>';
@@ -173,6 +179,51 @@ class Navis_Quick_Posts {
         return $data;
     }
 
+
+    function provide_embedly_config() {
+        if ( 'quickpost' != get_post_type() )
+            return;
+
+        $embedly_api_key = get_option( 'embedly_api_key' );
+        $max_width       = get_option( 'embed_size_w' );
+        $max_height      = get_option( 'embed_size_h' );
+    ?>
+        <script>
+            <?php if ( $embedly_api_key ): ?>
+                EMBEDLY_API_KEY = '<?php echo $embedly_api_key; ?>';
+            <?php endif; ?>
+            <?php if ( $max_width ): ?>
+                MAX_EMBED_WIDTH = <?php echo $max_width; ?>;
+            <?php endif; ?>
+            <?php if ( $max_height ): ?>
+                MAX_EMBED_HEIGHT = <?php echo $max_height; ?>;
+            <?php endif; ?>
+        </script>
+    <?php
+    }
+
+
+    function init_settings() {
+        add_settings_section(
+            'navis_quick_post_settings', 'Navis Quick Post settings', 
+            array( &$this, 'settings_callback' ), 'navis_qp' 
+        );
+
+        add_settings_field( 
+            'embedly_api_key', 'Embedly API Key', 
+            array( &$this, 'embedly_key_callback' ), 'navis_qp', 
+            'navis_quick_post_settings' 
+        );
+        register_setting( 'navis_qp', 'embedly_api_key' );
+    }
+
+
+    function settings_callback() { }
+
+    function embedly_key_callback() {
+        $option = get_option( 'embedly_api_key' );
+        echo "<input type='text' value='$option' name='embedly_api_key' style='width: 300px;' />"; 
+    }
 
     function add_options_page() {
         add_options_page( 'Quick Posts', 'Quick Posts', 'manage_options',
@@ -188,7 +239,7 @@ class Navis_Quick_Posts {
                 <?php settings_fields( 'navis_qp' ); ?>
                 <?php do_settings_sections( 'navis_qp' ); ?>
 
-                <input name="Submit" type="submit" value="<?php esc_attr( 'Save Changes' ); ?>" />
+                <input name="Submit" type="submit" value="Save Changes" />
             </form>
         </div>
     <?php
