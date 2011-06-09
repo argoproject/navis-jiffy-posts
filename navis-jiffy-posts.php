@@ -26,13 +26,11 @@
 class Navis_Jiffy_Posts {
     function __construct() {
         add_action( 'init', array( &$this, 'register_post_type' ) );
+        add_filter( 'post_class', array( &$this, 'add_post_class' ) );
 
-        if ( is_admin() )
-            add_action( 'init', array( &$this, 'admin_init' ) );
-    }
+        if ( ! is_admin() )
+            return;
 
-
-    function admin_init() {
         add_action( 'admin_menu', array( &$this, 'add_options_page' ) );
 
         add_action( 'admin_init', array( &$this, 'init_settings' ) );
@@ -83,6 +81,17 @@ class Navis_Jiffy_Posts {
             'menu_position' => 6,
             'taxonomies' => array(),
         ) );
+    }
+
+
+    function add_post_class( $classes, $class, $id ) {
+        global $post;
+        
+        $linktype = get_post_meta( $post->ID, '_linktype', true );
+        if ( $linktype )
+            $classes[] = 'jiffy-' . $linktype;
+
+        return $classes;
     }
 
 
@@ -159,24 +168,20 @@ class Navis_Jiffy_Posts {
         <p id="leadinPreviewArea"><?php echo $leadintext; ?></p>
         <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
         <input type="hidden" id="embedlyarea" name="embedlyarea" value="" />
+        <input type="hidden" id="linktype" name="linktype" value="" />
+        <input type="hidden" id="provider_name" name="provider_name" value="" />
+        <input type="hidden" id="provider_url" name="provider_url" value="" />
     <?php
     }
 
 
     function save_post( $post_id ) {
-        if ( isset( $_POST[ 'navis_embed_url' ] ) ) {
-            update_post_meta( $post_id, '_navis_embed_url', 
-                $_POST[ 'navis_embed_url' ] 
-            );
-        }
-
-        if ( isset( $_POST[ 'leadintext' ] ) ) {
-            update_post_meta( $post_id, '_leadintext', $_POST[ 'leadintext' ] );
-        }
-
-        if ( isset( $_POST[ 'embedlyarea' ] ) ) {
-            update_post_meta( $post_id, '_embedlyarea', $_POST[ 'embedlyarea' ] );
-            $content .= $_POST[ 'embedlyarea' ];
+        $fields = array( 'navis_embed_url', 'leadintext', 'embedlyarea',
+            'linktype', 'provider_name', 'provider_url' 
+        );
+        foreach ( $fields as $field ) {
+            if ( isset( $_POST[ $field ] ) )
+                update_post_meta( $post_id, '_' . $field, $_POST[ $field ] );
         }
     }
 
@@ -197,7 +202,7 @@ class Navis_Jiffy_Posts {
 
 
     function provide_embedly_config() {
-        if ( 'post' != get_post_type() )
+        if ( 'jiffypost' != get_post_type() )
             return;
 
         $embedly_api_key = get_option( 'embedly_api_key' );

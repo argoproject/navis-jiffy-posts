@@ -42,6 +42,8 @@ function buildHtmlFromOembed( oembed ) {
             break;
     }
 
+    html += renderProviderData( oembed );
+
     return html;
 }
 
@@ -51,9 +53,10 @@ function renderLinkOembed( oembed ) {
     if ( oembed.thumbnail_url ) {
         html += '<div class="module image left" width="' + 
             oembed.width + '">';
+        html += '<a href="' + oembed.url + '">';
         html += '<img src="' + oembed.thumbnail_url + '" height="' +
             oembed.height + '" width="' + oembed.width + '" ' +
-            'class="alignleft" />';
+            'class="alignleft" /></a>';
         html += '</div>';
     }
     html += '<p><blockquote>' + oembed.description + '</blockquote></p>';
@@ -67,9 +70,15 @@ function renderPhotoOembed( oembed ) {
     return html;
 }
 
+
+function renderProviderData( oembed ) {
+    return '<p class="jiffyPostProvider"><em>(via <a href="' + oembed.url + 
+            '">' + oembed.provider_name + '</a>)</em></p>';
+}
+
+
 jQuery( document ).ready( function() {
     var $ = jQuery;
-
 
     function handleEmbedly( url ) {
         var opts = {};
@@ -91,12 +100,14 @@ jQuery( document ).ready( function() {
             // Get the generated HTML or make it ourselves
             html = buildHtmlFromOembed( oembed );
 
-            // Add the embed to the TinyMCE visual editor
-            //window.send_to_editor( html );
-
-            // Also, show a preview of the output
+            // Show a preview of the output
             $( '#embedlyPreviewArea' ).html( html );
             $( '#embedlyarea' ).val( html );
+
+            // Set additional metadata from the response
+            $( '#linktype' ).val( oembed.type );
+            $( '#provider_name' ).val( oembed.provider_name );
+            $( '#provider_url' ).val( oembed.provider_url );
         });
     }
 
