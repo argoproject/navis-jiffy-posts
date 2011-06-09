@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Navis Quick Posts
+ * Plugin Name: Navis Jiffy Posts
  * Description: Makes it easy to quickly create a post from a URL
  * Version: 0.1
  * Author: Marc Lavallee 
@@ -23,7 +23,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-class Navis_Quick_Posts {
+class Navis_Jiffy_Posts {
     function __construct() {
         add_action( 'init', array( &$this, 'register_post_type' ) );
 
@@ -63,21 +63,21 @@ class Navis_Quick_Posts {
 
 
     function register_post_type() {
-        register_post_type( 'quickpost', array(
+        register_post_type( 'jiffypost', array(
             'labels' => array(
-                'name' => 'Quick Posts',
-                'singular_name' => 'Quick Post',
+                'name' => 'Jiffy Posts',
+                'singular_name' => 'Jiffy Post',
                 'add_new' => 'Add New',
-                'add_new_item' => 'Add New Quick Post',
+                'add_new_item' => 'Add New Jiffy Post',
                 'edit' => 'Edit',
-                'edit_item' => 'Edit Quick Post',
+                'edit_item' => 'Edit Jiffy Post',
                 'view' => 'View',
-                'view_item' => 'View Quick Post',
-                'search_items' => 'Search Quick Posts',
-                'not_found' => 'No quick posts found',
-                'not_found_in_trash' => 'No quick posts found in Trash',
+                'view_item' => 'View Jiffy Post',
+                'search_items' => 'Search Jiffy Posts',
+                'not_found' => 'No Jiffy Posts found',
+                'not_found_in_trash' => 'No Jiffy Posts found in Trash',
             ),
-            'description' => 'Quick Posts',
+            'description' => 'Jiffy Posts',
             'supports' => array( 'title', 'comments', 'author' ),
             'public' => true,
             'menu_position' => 6,
@@ -87,7 +87,7 @@ class Navis_Quick_Posts {
 
 
     function register_admin_scripts() {
-        if ( 'quickpost' != get_post_type() )
+        if ( 'jiffypost' != get_post_type() )
             return;
 
         // Embed.ly's JavaScript client
@@ -99,8 +99,8 @@ class Navis_Quick_Posts {
         );
 
         // Our JS routines
-        $oursrc = plugins_url( 'js/navis-quick-posts-admin.js', __FILE__ );
-        wp_enqueue_script( 'navis-quick-posts-admin', $oursrc, 
+        $oursrc = plugins_url( 'js/navis-jiffy-posts-admin.js', __FILE__ );
+        wp_enqueue_script( 'navis-jiffy-posts-admin', $oursrc, 
             array( 'jquery-embedly' ), '0.1' 
         );
     }
@@ -115,17 +115,17 @@ class Navis_Quick_Posts {
 
     function add_post_meta_boxes() {
         add_meta_box( 'navisembedurl', 'Embed a URL', 
-            array( &$this, 'embed_url_box' ), 'quickpost', 
+            array( &$this, 'embed_url_box' ), 'jiffypost', 
             'normal', 'high' 
         );
 
         add_meta_box( 'navisleadin', 'Lead in text',
-            array( &$this, 'embed_leadin_box' ), 'quickpost', 
+            array( &$this, 'embed_leadin_box' ), 'jiffypost', 
             'normal', 'high' 
         );
 
         add_meta_box( 'navisembedpreview', 'Preview Embed',
-            array( &$this, 'embed_preview_box' ), 'quickpost',
+            array( &$this, 'embed_preview_box' ), 'jiffypost',
             'normal', 'high'
         );
     }
@@ -197,7 +197,7 @@ class Navis_Quick_Posts {
 
 
     function provide_embedly_config() {
-        if ( 'quickpost' != get_post_type() )
+        if ( 'post' != get_post_type() )
             return;
 
         $embedly_api_key = get_option( 'embedly_api_key' );
@@ -221,17 +221,17 @@ class Navis_Quick_Posts {
 
     function init_settings() {
         add_settings_section(
-            'navis_quick_post_settings', 'Navis Quick Post settings', 
-            array( &$this, 'settings_callback' ), 'navis_qp' 
+            'navis_jiffy_post_settings', 'Navis Jiffy Post settings', 
+            array( &$this, 'settings_callback' ), 'navis_jp' 
         );
 
         add_settings_field( 
             'embedly_api_key', 'Embedly API Key', 
-            array( &$this, 'embedly_key_callback' ), 'navis_qp', 
-            'navis_quick_post_settings' 
+            array( &$this, 'embedly_key_callback' ), 'navis_jp', 
+            'navis_jiffy_post_settings' 
         );
         
-        register_setting( 'navis_qp', 'embedly_api_key' );
+        register_setting( 'navis_jp', 'embedly_api_key' );
     }
 
 
@@ -243,18 +243,18 @@ class Navis_Quick_Posts {
     }
 
     function add_options_page() {
-        add_options_page( 'Quick Posts', 'Quick Posts', 'manage_options',
-                          'navis_qp', array( &$this, 'options_page' ) );
+        add_options_page( 'Jiffy Posts', 'Jiffy Posts', 'manage_options',
+                          'navis_jp', array( &$this, 'options_page' ) );
     }
 
 
     function options_page() {
     ?>
         <div>
-            <h2>Navis Quick Posts</h2>
+            <h2>Navis Jiffy Posts</h2>
             <form action="options.php" method="post">
-                <?php settings_fields( 'navis_qp' ); ?>
-                <?php do_settings_sections( 'navis_qp' ); ?>
+                <?php settings_fields( 'navis_jp' ); ?>
+                <?php do_settings_sections( 'navis_jp' ); ?>
 
                 <input name="Submit" type="submit" value="Save Changes" />
             </form>
@@ -264,4 +264,4 @@ class Navis_Quick_Posts {
 
 }
 
-new Navis_Quick_Posts;
+new Navis_Jiffy_Posts;
