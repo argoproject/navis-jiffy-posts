@@ -25,12 +25,18 @@
 
 class Navis_Quick_Posts {
     function __construct() {
-        add_action( 'init', array( $this, 'init' ) );
         add_action( 'init', array( &$this, 'register_post_type' ) );
+
+        if ( is_admin() )
+            add_action( 'init', array( &$this, 'admin_init' ) );
     }
 
 
-    function init() {
+    function admin_init() {
+        add_action( 'admin_menu', array( &$this, 'add_options_page' ) );
+
+        add_action( 'admin_init', array( &$this, 'init_settings' ) );
+
         add_action( 'admin_head-post.php', 
             array( &$this, 'provide_embedly_config' )
         );
@@ -53,9 +59,6 @@ class Navis_Quick_Posts {
         add_filter( 'wp_insert_post_data', 
             array( &$this, 'insert_post_content' ) 
         );
-
-        add_action( 'admin_init', array( &$this, 'init_settings' ) );
-        add_action( 'admin_menu', array( &$this, 'add_options_page' ) );
     }
 
 
@@ -227,6 +230,7 @@ class Navis_Quick_Posts {
             array( &$this, 'embedly_key_callback' ), 'navis_qp', 
             'navis_quick_post_settings' 
         );
+        
         register_setting( 'navis_qp', 'embedly_api_key' );
     }
 
