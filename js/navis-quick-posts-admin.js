@@ -1,4 +1,25 @@
 var EMBEDLY_API_KEY;
+var MAX_EMBED_WIDTH;
+var MAX_EMBED_HEIGHT;
+
+function tinyMCESetup( ed ) {
+    /*
+    onInit.add( function(ed) {
+        mceObjParent = window.parentSandboxBridge;
+    });
+    */
+
+    ed.onKeyUp.add( function( ed, evt ) { 
+        var $ = jQuery;
+        var newText = $( '#leadintext' ).val();
+        //$( '#leadinPreviewArea' ).html( '' );
+        var preview = document.getElementById( 'leadinPreviewArea' );
+        preview.innerHTML = newText;
+        //alert( preview );
+        //$( '#leadinPreviewArea' ).html( newText );
+    } );
+}
+
 
 function buildHtmlFromOembed( oembed ) {
     var html = '';
@@ -49,6 +70,7 @@ function renderPhotoOembed( oembed ) {
 jQuery( document ).ready( function() {
     var $ = jQuery;
 
+
     function handleEmbedly( url ) {
         var opts = {};
         if ( EMBEDLY_API_KEY ) {
@@ -92,7 +114,17 @@ jQuery( document ).ready( function() {
         handleEmbedly( url );
     });
 
+    $( '#edButtonPreview' ).click( function() {
+        tinyMCE.execCommand( 'mceAddControl', false, 'leadintext' );
+    });
+
+    $( '#edButtonHTML' ).click( function() {
+        tinyMCE.execCommand( 'mceRemoveControl', false, 'leadintext' );
+    });
+
+    /*
     $( '#leadintext' ).keyup( function() {
         $( '#leadinPreviewArea' ).html( $(this).val() );
     });
+    */
 });

@@ -47,6 +47,8 @@ class Navis_Quick_Posts {
 
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
 
+        add_filter( 'tiny_mce_before_init', array( &$this, 'init_tiny_mce' ) );
+
         add_action( 'save_post', array( &$this, 'save_post' ) );
         add_filter( 'wp_insert_post_data', 
             array( &$this, 'insert_post_content' ) 
@@ -98,7 +100,13 @@ class Navis_Quick_Posts {
         wp_enqueue_script( 'navis-quick-posts-admin', $oursrc, 
             array( 'jquery-embedly' ), '0.1' 
         );
+    }
 
+
+    function init_tiny_mce( $initArray ) {
+        $initArray[ 'editor_selector' ] = 'leadintext';
+        $initArray[ 'setup' ] = 'tinyMCESetup';
+        return $initArray;
     }
 
 
@@ -129,20 +137,25 @@ class Navis_Quick_Posts {
     }
 
 
+
+    function embed_leadin_box( $post ) {
+        $leadintext = get_post_meta( $post->ID, '_leadintext', true );
+    ?>
+        <p align="right">
+            <a id="edButtonHTML" class="">HTML</a>
+            <a id="edButtonPreview" class="active">Visual</a>
+        </p>
+        <textarea id="leadintext" class="leadintext" name="leadintext" style="width: 98%"><?php echo $leadintext; ?></textarea>
+    <?php
+    }
+
+
     function embed_preview_box() {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
     ?>
         <p id="leadinPreviewArea"><?php echo $leadintext; ?></p>
         <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
         <input type="hidden" id="embedlyarea" name="embedlyarea" value="" />
-    <?php
-    }
-
-
-    function embed_leadin_box( $post ) {
-        $leadintext = get_post_meta( $post->ID, '_leadintext', true );
-    ?>
-        <textarea id="leadintext" name="leadintext" style="width: 98%"><?php echo $leadintext; ?></textarea>
     <?php
     }
 
