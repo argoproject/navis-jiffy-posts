@@ -84,7 +84,7 @@ class Navis_Jiffy_Posts {
     }
 
 
-    function add_post_class( $classes, $class, $id ) {
+    function add_post_class( $classes ) {
         global $post;
         
         $linktype = get_post_meta( $post->ID, '_linktype', true );
