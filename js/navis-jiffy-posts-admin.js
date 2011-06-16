@@ -59,7 +59,7 @@ function renderLinkOembed( oembed ) {
             'class="alignleft" /></a>';
         html += '</div>';
     }
-    html += '<p><blockquote>' + oembed.description + '</blockquote></p>';
+    html += '<p>' + oembed.description + '</p>';
     return html;
 }
 
