@@ -23,26 +23,29 @@ function tinyMCESetup( ed ) {
 
 function buildHtmlFromOembed( oembed ) {
     var html = '';
-    
+
+    html += renderProviderData( oembed );
+    html += '<div class="embedded-object">';
+        
     switch ( oembed.type ) {
         case 'video':
         case 'rich':
         case 'html':
-            html = oembed.html;
+            html += oembed.html;
             break;
         case 'link':
-            html = renderLinkOembed( oembed );
+            html += renderLinkOembed( oembed );
             break;
         case 'photo':
-            html = renderPhotoOembed( oembed );
+            html += renderPhotoOembed( oembed );
             break;
         case 'error':
         default:
             alert( 'error' );
             break;
     }
-
-    html += renderProviderData( oembed );
+	
+	html += '</div>';
 
     return html;
 }
@@ -51,15 +54,10 @@ function buildHtmlFromOembed( oembed ) {
 function renderLinkOembed( oembed ) {
     var html = '';
     if ( oembed.thumbnail_url ) {
-        html += '<div class="module image left" width="' + 
-            oembed.width + '">';
         html += '<a href="' + oembed.url + '">';
-        html += '<img src="' + oembed.thumbnail_url + '" height="' +
-            oembed.height + '" width="' + oembed.width + '" ' +
-            'class="alignleft" /></a>';
-        html += '</div>';
+        html += '<img src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
     }
-    html += '<p>' + oembed.description + '</p>';
+    html += '<blockquote><p>' + oembed.description + '</p></blockquote>';
     return html;
 }
 
@@ -72,8 +70,8 @@ function renderPhotoOembed( oembed ) {
 
 
 function renderProviderData( oembed ) {
-    return '<p class="jiffyPostProvider"><em>(via <a href="' + oembed.url + 
-            '">' + oembed.provider_name + '</a>)</em></p>';
+    return '<ul class="embed-metadata"><li>Source: <a href="' + oembed.url + 
+            '">' + oembed.provider_name + '</a></li></ul>';
 }
 
 

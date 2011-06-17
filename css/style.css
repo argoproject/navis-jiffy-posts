@@ -1,0 +1,44 @@
+#content .jiffypost h2 {
+font-size: 22px;
+}
+
+/*temoprary hack until we can strip out extra WP markup */
+#content .jiffypost br {
+display: none;
+}
+
+.embed-metadata {
+background: transparent url(../img/jiffy-icon.png) no-repeat;
+}
+
+#content .meta-gestures {
+width: 100%;
+}
+
+.embed-metadata {
+font-size: 10px;
+font-family: helvetica, arial, sans-serif;
+width: 140px;
+float: left;
+margin-top: 3px;
+min-height: 20px;
+}
+
+.embed-metadata li {
+margin-left: 35px;
+}
+
+.embedded-object {
+margin-left: 160px;
+margin-bottom: 30px;
+}
+
+.embedded-object p {
+font-size: 12px;
+}
+
+.embedded-object img {
+float: right;
+margin-left: 15px;
+border: 1px solid #ddd;
+}

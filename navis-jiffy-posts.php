@@ -23,6 +23,17 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+add_action('wp_print_styles', 'add_my_stylesheet');
+
+function add_my_stylesheet() {
+	$myStyleUrl = WP_PLUGIN_URL . '/navis-jiffy-posts/css/style.css';
+	$myStyleFile = WP_PLUGIN_DIR . '/navis-jiffy-posts/css/style.css';
+	if ( file_exists($myStyleFile) ) {
+		wp_register_style('myStyleSheets', $myStyleUrl);
+		wp_enqueue_style( 'myStyleSheets');
+	}
+}
+
 class Navis_Jiffy_Posts {
     function __construct() {
         add_action( 'init', array( &$this, 'register_post_type' ) );
@@ -110,7 +121,7 @@ class Navis_Jiffy_Posts {
         // Our JS routines
         $oursrc = plugins_url( 'js/navis-jiffy-posts-admin.js', __FILE__ );
         wp_enqueue_script( 'navis-jiffy-posts-admin', $oursrc, 
-            array( 'jquery-embedly' ), '0.2' 
+            array( 'jquery-embedly' ), '0.19' 
         );
     }
 
