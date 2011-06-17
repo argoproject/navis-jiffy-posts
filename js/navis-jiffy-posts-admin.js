@@ -64,14 +64,14 @@ function renderLinkOembed( oembed ) {
 
 function renderPhotoOembed( oembed ) {
     var html = '';
-    html += '<img src="' + oembed.url + '" />';
+    html += '<p><img src="' + oembed.url + '" width="460" /></p>';
     return html;
 }
 
 
 function renderProviderData( oembed ) {
     return '<ul class="embed-metadata"><li>Source: <a href="' + oembed.url + 
-            '">' + oembed.provider_name + '</a></li></ul>';
+            '">' + oembed.provider_name + '</a></li><li>Via: <em><a href="http://twitter.com/#!/lindamood">@lindamood</a></em></li></ul>';
 }
 
 

@@ -121,7 +121,7 @@ class Navis_Jiffy_Posts {
         // Our JS routines
         $oursrc = plugins_url( 'js/navis-jiffy-posts-admin.js', __FILE__ );
         wp_enqueue_script( 'navis-jiffy-posts-admin', $oursrc, 
-            array( 'jquery-embedly' ), '0.19' 
+            array( 'jquery-embedly' ), '0.23' 
         );
     }
 

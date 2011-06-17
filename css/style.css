@@ -2,6 +2,12 @@
 font-size: 22px;
 }
 
+.jiffypost {
+margin-bottom: 20px;
+padding-bottom: 20px;
+border-bottom: 1px solid #ddd;
+}
+
 /*temoprary hack until we can strip out extra WP markup */
 #content .jiffypost br {
 display: none;
@@ -37,7 +43,7 @@ margin-bottom: 30px;
 font-size: 12px;
 }
 
-.embedded-object img {
+.jiffy-link .embedded-object img {
 float: right;
 margin-left: 15px;
 border: 1px solid #ddd;
