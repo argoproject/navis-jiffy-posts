@@ -70,8 +70,26 @@ function renderPhotoOembed( oembed ) {
 
 
 function renderProviderData( oembed ) {
-    return '<ul class="embed-metadata"><li>Source: <a href="' + oembed.url + 
-            '">' + oembed.provider_name + '</a></li><li>Via: <em><a href="http://twitter.com/#!/lindamood">@lindamood</a></em></li></ul>';
+    phtml = '<ul class="embed-metadata">';
+    phtml += '<li>Source: <a href="' + oembed.url + '">' + 
+            oembed.provider_name + '</a></li>';
+
+    if ( jQuery( '#via_name' ).val() ) { 
+        phtml += '<li>Via: <em>';
+
+        if ( jQuery( '#via_url' ).val() )
+            phtml += '<a href="' + jQuery( '#via_url' ).val() + '">';
+
+        phtml += jQuery( '#via_name' ).val();
+
+        if ( jQuery( '#via_url' ).val() ) 
+            phtml += '</a>';
+
+        phtml += '</li>';
+    }
+    phtml += '</ul>';
+   
+    return phtml;
 }
 
 

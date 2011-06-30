@@ -23,20 +23,12 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-add_action('wp_print_styles', 'add_my_stylesheet');
-
-function add_my_stylesheet() {
-	$myStyleUrl = WP_PLUGIN_URL . '/navis-jiffy-posts/css/style.css';
-	$myStyleFile = WP_PLUGIN_DIR . '/navis-jiffy-posts/css/style.css';
-	if ( file_exists($myStyleFile) ) {
-		wp_register_style('myStyleSheets', $myStyleUrl);
-		wp_enqueue_style( 'myStyleSheets');
-	}
-}
-
 class Navis_Jiffy_Posts {
     function __construct() {
         add_action( 'init', array( &$this, 'register_post_type' ) );
+
+        add_action( 'wp_print_styles', array( &$this, 'add_stylesheet' ) );
+
         add_filter( 'post_class', array( &$this, 'add_post_class' ) );
 
         if ( ! is_admin() )
@@ -95,6 +87,15 @@ class Navis_Jiffy_Posts {
     }
 
 
+    function add_stylesheet() {
+        $style_css = plugins_url( 'css/style.css', __FILE__ );
+        wp_enqueue_style( 
+            'navis-jiffy-post-styles', $style_css, array(), '1.0'
+        );
+    }
+
+
+
     function add_post_class( $classes ) {
         global $post;
         
@@ -144,6 +145,11 @@ class Navis_Jiffy_Posts {
             'normal', 'high' 
         );
 
+        add_meta_box( 'navisviainfo', 'Via',
+            array( &$this, 'via_info_box' ), 'jiffypost',
+            'normal', 'high'
+        );
+
         add_meta_box( 'navisembedpreview', 'Preview Embed',
             array( &$this, 'embed_preview_box' ), 'jiffypost',
             'normal', 'high'
@@ -173,6 +179,17 @@ class Navis_Jiffy_Posts {
     }
 
 
+    function via_info_box( $post ) {
+        $via_name = get_post_meta( $post->ID, '_via_name', true );
+        $via_url = get_post_meta( $post->ID, '_via_url', true );
+    ?>
+
+        Via name: <input type="text" name="via_name" id="via_name" value="<?php echo $via_name; ?>" style="width: 50%;" /><br />
+        Via URL: <input type="text" name="via_url" id="via_url" value="<?php echo $via_url; ?>" style="width: 80%;" />
+    <?php
+    }
+
+
     function embed_preview_box() {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
     ?>
@@ -188,7 +205,8 @@ class Navis_Jiffy_Posts {
 
     function save_post( $post_id ) {
         $fields = array( 'navis_embed_url', 'leadintext', 'embedlyarea',
-            'linktype', 'provider_name', 'provider_url' 
+           'linktype', 'provider_name', 'provider_url', 'via_name',
+           'via_url'
         );
         foreach ( $fields as $field ) {
             if ( isset( $_POST[ $field ] ) )
