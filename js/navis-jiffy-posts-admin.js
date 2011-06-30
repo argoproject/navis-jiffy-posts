@@ -108,10 +108,15 @@ jQuery( document ).ready( function() {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
         $.embedly( url, opts, function( oembed, dict ) {
-            // Set the title. Focus & blur necessary to wipe out 
+            // Set the title if it's not already set.
+            // Focus & blur are necessary to wipe out 
             // default "Enter title here" text
-            $( '#title' ).val( oembed.title );
-            $( '#title' ).focus(); $( '#title' ).blur();
+            if ( ! $( '#title' ).val() ) {
+                title = '"' + oembed.title + '"';
+                $( '#title' ).val( title );
+                $( '#title' ).focus(); 
+                $( '#title' ).blur();
+            }
 
             // Get the generated HTML or make it ourselves
             html = buildHtmlFromOembed( oembed );
