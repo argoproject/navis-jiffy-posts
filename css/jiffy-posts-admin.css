@@ -1,0 +1,13 @@
+.jiffy-remove {
+    position: relative;
+    display: block;
+    background: #eee url(../../../../wp-admin/images/no.png) no-repeat 2px 2px;
+    text-indent: -10000px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ddd;
+    z-index: 10;
+    margin-bottom: -22px;
+}
+
+.jiffy-hidden {display: none;}

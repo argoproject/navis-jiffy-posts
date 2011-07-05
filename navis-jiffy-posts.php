@@ -59,6 +59,15 @@ class Navis_Jiffy_Posts {
             array( &$this, 'add_stylesheet' ) 
         );
 
+        add_action( 
+            'admin_print_styles-post.php', 
+            array( &$this, 'register_admin_styles' ) 
+        );
+        add_action( 
+            'admin_print_styles-post-new.php', 
+            array( &$this, 'register_admin_styles' ) 
+        );
+
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
 
         add_filter( 'tiny_mce_before_init', array( &$this, 'init_tiny_mce' ) );
@@ -141,6 +150,14 @@ class Navis_Jiffy_Posts {
     }
 
 
+    function register_admin_styles() {
+        $style_css = plugins_url( 'css/jiffy-posts-admin.css', __FILE__ );
+        wp_enqueue_style( 
+            'navis-jiffy-post-admin-styles', $style_css, array(), '1.0'
+        );
+    }
+
+
     function init_tiny_mce( $initArray ) {
         $initArray[ 'editor_selector' ] = 'leadintext';
         $initArray[ 'setup' ] = 'tinyMCESetup';
@@ -180,7 +197,6 @@ class Navis_Jiffy_Posts {
     }
 
 
-
     function embed_leadin_box( $post ) {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
     ?>
@@ -209,7 +225,9 @@ class Navis_Jiffy_Posts {
         $custom_description = get_post_meta( 
             $post->ID, '_custom_description', true 
         );
+        $hide_image = get_post_meta( $post->ID, '_hide_image', true );
     ?>
+
         <div id="content" class="jiffypost">
             <p id="leadinPreviewArea"><?php // echo $leadintext; ?></p>
             <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
@@ -217,6 +235,7 @@ class Navis_Jiffy_Posts {
             <input type="hidden" id="provider_name" name="provider_name" value="" />
             <input type="hidden" id="provider_url" name="provider_url" value="" />
             <input type="hidden" id="custom_description" name="custom_description" value="<?php echo esc_attr( $custom_description ); ?>" />
+            <input type="hidden" id="hide_image" name="hide_image" value="<?php echo esc_attr( $hide_image ); ?>">
         </div>
 
     <?php
@@ -235,9 +254,12 @@ class Navis_Jiffy_Posts {
 
 
     function save_post( $post_id ) {
+        // XXX: some of these fields can be purged from here and
+        // the various metaboxes above now that the entire embedly
+        // response is being automatically stored as metadata
         $fields = array( 'navis_embed_url', 'leadintext', 'embedlyarea',
            'linktype', 'provider_name', 'provider_url', 'via_name',
-           'via_url', 'oembedData', 'custom_description'
+           'via_url', 'oembedData', 'custom_description', 'hide_image'
         );
         foreach ( $fields as $field ) {
             if ( isset( $_POST[ $field ] ) ) {

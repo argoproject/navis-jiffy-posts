@@ -39,10 +39,17 @@ function renderOembed( oembed ) {
     // Make it possible to remove the image
     if ( $( '#embedlyThumbnail' ) ) {
         $( '#embedlyThumbnail' ).hover( function() {
-            alert( 'in' );
+            $( '#remove-image-icon' ).addClass( 'jiffy-remove' );
+            $( '#remove-image-icon' ).click( function( evt ) {
+                $( '#embedlyThumbnail' ).detach();
+                $( '#remove-image-icon' ).detach();
+                $( '#hide_image' ).val( '1' );
+                return false;
+            });
         },
         function () {
-            alert( 'out' );
+            //$( '#remove-image-icon' ).removeClass( 'jiffy-remove' );
+            //$( '#remove-image-icon' ).unbind( 'click', 'removeImage' );
         });
     }
     
@@ -100,8 +107,11 @@ function buildHtmlFromOembed( oembed, description ) {
 
 
 function renderLinkOembed( oembed, description ) {
+    var $ = jQuery;
+
     var html = '';
-    if ( oembed.thumbnail_url ) {
+    if ( oembed.thumbnail_url && $( '#hide_image' ).val() != 1 ) {
+        html += '<a href="#" id="remove-image-icon"></a>';
         html += '<a id="embedlyThumbnailLink" href="' + oembed.url + '">';
         html += '<img id="embedlyThumbnail" src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
     }
