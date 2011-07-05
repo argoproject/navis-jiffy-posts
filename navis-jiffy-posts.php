@@ -28,7 +28,6 @@ class Navis_Jiffy_Posts {
         add_action( 'init', array( &$this, 'register_post_type' ) );
 
         add_action( 'wp_print_styles', array( &$this, 'add_stylesheet' ) );
-
         add_filter( 'post_class', array( &$this, 'add_post_class' ) );
 
         if ( ! is_admin() )
@@ -50,6 +49,14 @@ class Navis_Jiffy_Posts {
         );
         add_action( 'admin_print_scripts-post-new.php', 
             array( &$this, 'register_admin_scripts' )
+        );
+
+        add_action( 
+            'admin_print_styles-post.php', array( &$this, 'add_stylesheet' ) 
+        );
+        add_action( 
+            'admin_print_styles-post-new.php', 
+            array( &$this, 'add_stylesheet' ) 
         );
 
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
@@ -95,7 +102,6 @@ class Navis_Jiffy_Posts {
     }
 
 
-
     function add_post_class( $classes ) {
         global $post;
         
@@ -119,10 +125,18 @@ class Navis_Jiffy_Posts {
             array( 'jquery' ), '2.0.0' 
         );
 
+        // Jeditable plugin
+        $jeditsrc = plugins_url(
+            'js/jquery_jeditable/jquery.jeditable.js', __FILE__
+        );
+        wp_enqueue_script( 'jquery-jeditable', $jeditsrc,
+            array( 'jquery' ), '1.4.2'
+        );
+
         // Our JS routines
         $oursrc = plugins_url( 'js/navis-jiffy-posts-admin.js', __FILE__ );
         wp_enqueue_script( 'navis-jiffy-posts-admin', $oursrc, 
-            array( 'jquery-embedly' ), '0.23' 
+            array( 'jquery-embedly', 'jquery-jeditable' ), '0.23' 
         );
     }
 
@@ -190,27 +204,53 @@ class Navis_Jiffy_Posts {
     }
 
 
-    function embed_preview_box() {
+    function embed_preview_box( $post ) {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
+        $custom_description = get_post_meta( 
+            $post->ID, '_custom_description', true 
+        );
     ?>
-        <p id="leadinPreviewArea"><?php echo $leadintext; ?></p>
-        <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
-        <input type="hidden" id="embedlyarea" name="embedlyarea" value="" />
-        <input type="hidden" id="linktype" name="linktype" value="" />
-        <input type="hidden" id="provider_name" name="provider_name" value="" />
-        <input type="hidden" id="provider_url" name="provider_url" value="" />
+        <div id="content" class="jiffypost">
+            <p id="leadinPreviewArea"><?php // echo $leadintext; ?></p>
+            <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
+            <input type="hidden" id="linktype" name="linktype" value="" />
+            <input type="hidden" id="provider_name" name="provider_name" value="" />
+            <input type="hidden" id="provider_url" name="provider_url" value="" />
+            <input type="hidden" id="custom_description" name="custom_description" value="<?php echo esc_attr( $custom_description ); ?>" />
+        </div>
+
     <?php
+        $post_custom_keys = get_post_custom( $post->ID );
+        foreach ( $post_custom_keys as $key => $value ) {
+            $pubkey = substr( $key, 1 );
+            if ( strpos( $key, '_embedly_' ) === 0 ) {
+                printf( 
+                    '<input type="hidden" class="embedly_meta" ' .
+                    'id="%s" name="%s" value="%s" />', 
+                    $pubkey, $pubkey, esc_attr( $value[ 0 ] )
+                );
+            }
+        }
     }
 
 
     function save_post( $post_id ) {
         $fields = array( 'navis_embed_url', 'leadintext', 'embedlyarea',
            'linktype', 'provider_name', 'provider_url', 'via_name',
-           'via_url'
+           'via_url', 'oembedData', 'custom_description'
         );
         foreach ( $fields as $field ) {
-            if ( isset( $_POST[ $field ] ) )
-                update_post_meta( $post_id, '_' . $field, $_POST[ $field ] );
+            if ( isset( $_POST[ $field ] ) ) {
+                $data = $_POST[ $field ];
+                update_post_meta( $post_id, '_' . $field, $data );
+            }
+        }
+
+        foreach ( $_POST as $field => $value ) {
+            if ( strpos( $field, 'embedly' ) === 0 ) {
+                $unesc = urldecode( $value );
+                update_post_meta( $post_id, '_' . $field, $unesc );
+            } 
         }
     }
 

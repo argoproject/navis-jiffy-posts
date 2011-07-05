@@ -9,6 +9,7 @@ function tinyMCESetup( ed ) {
     });
     */
 
+    /*
     ed.onKeyUp.add( function( ed, evt ) { 
         var $ = jQuery;
         var newText = $( '#leadintext' ).val();
@@ -18,23 +19,70 @@ function tinyMCESetup( ed ) {
         //alert( preview );
         //$( '#leadinPreviewArea' ).html( newText );
     } );
+    */
+}
+
+function renderOembed( oembed ) {
+    var $ = jQuery;
+    var description = ( $( '#custom_description' ).val() ) ? $( '#custom_description' ).val() : null;
+
+    // Show a preview of the output
+    // Get the generated HTML or make it ourselves
+    html = buildHtmlFromOembed( oembed, description );
+    $( '#embedlyPreviewArea' ).html( html );
+
+    // Set additional metadata from the response
+    $( '#linktype' ).val( oembed.type );
+    $( '#provider_name' ).val( oembed.provider_name );
+    $( '#provider_url' ).val( oembed.provider_url );
+
+    // Make it possible to remove the image
+    if ( $( '#embedlyThumbnail' ) ) {
+        $( '#embedlyThumbnail' ).hover( function() {
+            alert( 'in' );
+        },
+        function () {
+            alert( 'out' );
+        });
+    }
+    
+    // Make the description editable
+    if ( $( '#embedlyDescription' ) ) {
+        $( '#embedlyDescription' ).editable( function( value, settings ) {
+            return value;
+}, {
+            type: 'textarea',
+            id: 'id',
+            name: 'summary',
+            tooltip: 'Click to edit description.',
+            indicator: 'Updating...',
+            style: 'display: inline; width: 80%;',
+            rows: 4,
+            cols: 40,
+            height: 100,
+            submit: 'Update',
+            callback: function( value, settings ) {
+                $( '#custom_description' ).val( value );
+            }
+        });
+    }
 }
 
 
-function buildHtmlFromOembed( oembed ) {
+function buildHtmlFromOembed( oembed, description ) {
     var html = '';
 
     html += renderProviderData( oembed );
     html += '<div class="embedded-object">';
         
-    switch ( oembed.type ) {
+    switch ( oembed[ 'type' ] ) {
         case 'video':
         case 'rich':
         case 'html':
-            html += oembed.html;
+            html += oembed[ 'html' ];
             break;
         case 'link':
-            html += renderLinkOembed( oembed );
+            html += renderLinkOembed( oembed, description );
             break;
         case 'photo':
             html += renderPhotoOembed( oembed );
@@ -51,13 +99,15 @@ function buildHtmlFromOembed( oembed ) {
 }
 
 
-function renderLinkOembed( oembed ) {
+function renderLinkOembed( oembed, description ) {
     var html = '';
     if ( oembed.thumbnail_url ) {
-        html += '<a href="' + oembed.url + '">';
-        html += '<img src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
+        html += '<a id="embedlyThumbnailLink" href="' + oembed.url + '">';
+        html += '<img id="embedlyThumbnail" src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
     }
-    html += '<blockquote><p>' + oembed.description + '</p></blockquote>';
+    html += '<blockquote><p id="embedlyDescription">';
+    html += ( description ) ? description : oembed.description;
+    html += '</p></blockquote>';
     return html;
 }
 
@@ -92,9 +142,38 @@ function renderProviderData( oembed ) {
     return phtml;
 }
 
+function getOembedData() {
+    var $ = jQuery; 
+
+    var oembed = {};
+
+    $.each( $( '.embedly_meta' ), function( key, elem ) {
+        var name = elem.id.replace( 'embedly_', '' );
+        oembed[ name ] = elem.value;
+    });
+
+    return oembed;
+}
+
+function saveOembedData( oembed ) {
+    var $ = jQuery; 
+    
+    $.each( oembed, function( key, value ) {
+        var field_name = 'embedly_' + key;
+        $( '#post' ).append( '<input type="hidden" id="' + field_name + 
+            '" name="' + field_name + '" value="' + encodeURIComponent( value ) + '" />' );
+    });
+}
 
 jQuery( document ).ready( function() {
     var $ = jQuery;
+
+    var oembed = getOembedData();
+    if ( oembed ) {
+        renderOembed( oembed );
+    } else {
+        handleEmbedly();
+    }
 
     function handleEmbedly( url ) {
         var opts = {};
@@ -108,6 +187,7 @@ jQuery( document ).ready( function() {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
         $.embedly( url, opts, function( oembed, dict ) {
+            //alert( JSON.stringify( oembed ) );
             // Set the title if it's not already set.
             // Focus & blur are necessary to wipe out 
             // default "Enter title here" text
@@ -118,24 +198,17 @@ jQuery( document ).ready( function() {
                 $( '#title' ).blur();
             }
 
-            // Get the generated HTML or make it ourselves
-            html = buildHtmlFromOembed( oembed );
-
-            // Show a preview of the output
-            $( '#embedlyPreviewArea' ).html( html );
-            $( '#embedlyarea' ).val( html );
-
-            // Set additional metadata from the response
-            $( '#linktype' ).val( oembed.type );
-            $( '#provider_name' ).val( oembed.provider_name );
-            $( '#provider_url' ).val( oembed.provider_url );
+            renderOembed( oembed );
+            saveOembedData( oembed );
         });
     }
 
+    /*
     if ( $( '#navis_embed_url' ).val() ) {
         var url = $( '#navis_embed_url' ).val();
         handleEmbedly( url );
     }
+    */
 
     if ( $( '#leadintext' ).val() ) {
         $( '#leadinPreviewArea' ).html( $( '#leadintext' ).val() );
