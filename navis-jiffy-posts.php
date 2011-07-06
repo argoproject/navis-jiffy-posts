@@ -236,7 +236,7 @@ class Navis_Jiffy_Posts {
         $hide_image = get_post_meta( $post->ID, '_hide_image', true );
     ?>
 
-        <div id="content" class="jiffypost">
+        <div id="content"><div class="jiffypost">
             <p id="leadinPreviewArea"><?php // echo $leadintext; ?></p>
             <div id="embedlyPreviewArea" style="overflow: hidden;"></div>
             <input type="hidden" id="linktype" name="linktype" value="" />
@@ -245,7 +245,7 @@ class Navis_Jiffy_Posts {
             <input type="hidden" id="custom_description" name="custom_description" value="<?php echo esc_attr( $custom_description ); ?>" />
             <input type="hidden" id="embedlyarea" name="embedlyarea" />
             <input type="hidden" id="hide_image" name="hide_image" value="<?php echo esc_attr( $hide_image ); ?>">
-        </div>
+        </div></div>
 
     <?php
         $post_custom_keys = get_post_custom( $post->ID );
