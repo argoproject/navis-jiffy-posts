@@ -188,12 +188,18 @@ jQuery( document ).ready( function() {
         if ( EMBEDLY_API_KEY ) {
             opts[ 'key' ] = EMBEDLY_API_KEY;
         }
+        opts[ 'maxWidth' ]  = 460;
+        opts[ 'maxHeight' ] = 640;
+
+        /*
+         * XXX: hardcoding embed widths for now
         if ( MAX_EMBED_WIDTH ) {
             opts[ 'maxWidth' ] = MAX_EMBED_WIDTH;
         }
         if ( MAX_EMBED_HEIGHT ) {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
+        */
         $.embedly( url, opts, function( oembed, dict ) {
             // Set the title if it's not already set.
             // Focus & blur are necessary to wipe out 
@@ -236,6 +242,12 @@ jQuery( document ).ready( function() {
 
     $( '#post' ).submit( function( evt ) {
         $( '#embedlyarea' ).val( $( '#embedlyPreviewArea' ).html() );
+    });
+    $( '#via_name' ).blur( function( evt ) {
+        renderOembed( oembed );
+    });
+    $( '#via_url' ).blur( function( evt ) {
+        renderOembed( oembed );
     });
     /*
     $( '#leadintext' ).keyup( function() {
