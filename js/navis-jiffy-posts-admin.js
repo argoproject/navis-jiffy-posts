@@ -30,6 +30,7 @@ function renderOembed( oembed ) {
     // Get the generated HTML or make it ourselves
     html = buildHtmlFromOembed( oembed, description );
     $( '#embedlyPreviewArea' ).html( html );
+    $( '#embedlyarea' ).val( html );
 
     // Set additional metadata from the response
     $( '#linktype' ).val( oembed.type );
@@ -82,11 +83,11 @@ function buildHtmlFromOembed( oembed, description ) {
     html += renderProviderData( oembed );
     html += '<div class="embedded-object">';
         
-    switch ( oembed[ 'type' ] ) {
+    switch ( oembed.type ) {
         case 'video':
         case 'rich':
         case 'html':
-            html += oembed[ 'html' ];
+            html += oembed.html;
             break;
         case 'link':
             html += renderLinkOembed( oembed, description );
@@ -179,10 +180,8 @@ jQuery( document ).ready( function() {
     var $ = jQuery;
 
     var oembed = getOembedData();
-    if ( oembed ) {
+    if ( ! $.isEmptyObject( oembed ) ) {
         renderOembed( oembed );
-    } else {
-        handleEmbedly();
     }
 
     function handleEmbedly( url ) {
@@ -197,7 +196,6 @@ jQuery( document ).ready( function() {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
         $.embedly( url, opts, function( oembed, dict ) {
-            //alert( JSON.stringify( oembed ) );
             // Set the title if it's not already set.
             // Focus & blur are necessary to wipe out 
             // default "Enter title here" text
