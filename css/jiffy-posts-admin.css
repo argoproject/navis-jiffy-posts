@@ -1,5 +1,6 @@
 .jiffy-remove {
     position: relative;
+    float: right;
     display: block;
     background: #eee url(../../../../wp-admin/images/no.png) no-repeat 2px 2px;
     text-indent: -10000px;

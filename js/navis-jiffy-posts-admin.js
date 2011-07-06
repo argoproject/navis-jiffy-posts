@@ -109,6 +109,8 @@ function buildHtmlFromOembed( oembed, description ) {
 function renderLinkOembed( oembed, description ) {
     var $ = jQuery;
 
+    $( '#jiffypost' ).addClass( 'jiffy-link' );
+
     var html = '';
     if ( oembed.thumbnail_url && $( '#hide_image' ).val() != 1 ) {
         html += '<a href="#" id="remove-image-icon"></a>';
