@@ -30,7 +30,6 @@ function renderOembed( oembed ) {
     // Get the generated HTML or make it ourselves
     html = buildHtmlFromOembed( oembed, description );
     $( '#embedlyPreviewArea' ).html( html );
-    $( '#embedlyarea' ).val( html );
 
     // Set additional metadata from the response
     $( '#linktype' ).val( oembed.type );
@@ -235,6 +234,9 @@ jQuery( document ).ready( function() {
         tinyMCE.execCommand( 'mceRemoveControl', false, 'leadintext' );
     });
 
+    $( '#post' ).submit( function( evt ) {
+        $( '#embedlyarea' ).val( $( '#embedlyPreviewArea' ).html() );
+    });
     /*
     $( '#leadintext' ).keyup( function() {
         $( '#leadinPreviewArea' ).html( $(this).val() );
