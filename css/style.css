@@ -27,11 +27,11 @@ min-height: 20px;
 }
 
 .embed-metadata li {
-margin-left: 35px;
+margin-left: 25px;
 }
 
 .embed-metadata .jiffy-icon {
-margin-top: 3px;
+margin-top: 1px;
 margin-left: 0;
 float: left;
 width: 16px;
@@ -46,10 +46,21 @@ margin-bottom: 30px;
 
 .embedded-object p {
 font-size: 12px;
+margin-bottom: 5px;
 }
 
 .jiffy-link .embedded-object img {
 float: right;
 margin-left: 15px;
 border: 1px solid #ddd;
+}
+
+#content .jiffy-sourceurl {
+font-family: helvetica, arial, sans-serif;
+font-size: 11px;
+font-style: italic;
+}
+
+#content .jiffy-sourceurl a {
+font-weight: normal;
 }
