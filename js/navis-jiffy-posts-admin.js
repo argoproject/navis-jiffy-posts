@@ -121,7 +121,7 @@ function renderLinkOembed( oembed, description ) {
     html += '<blockquote><p id="embedlyDescription">';
     html += ( description ) ? description : oembed.description;
     html += '</p></blockquote>';
-    html += '<p class="jiffy-sourceurl"><a href="#">&#8212; npr.org</a></p>';
+    html += '<p class="jiffy-sourceurl">&#8212; <a href="#">npr.org</a></p>';
     return html;
 }
 
