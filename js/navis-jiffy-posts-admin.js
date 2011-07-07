@@ -65,9 +65,9 @@ function renderOembed( oembed ) {
             tooltip: 'Click to edit description.',
             indicator: 'Updating...',
             style: 'display: inline; width: 80%;',
-            rows: 4,
-            cols: 40,
-            height: 100,
+            rows: 6,
+            cols: 30,
+            //height: 100,
             submit: 'Update',
             callback: function( value, settings ) {
                 $( '#custom_description' ).val( value );
