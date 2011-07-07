@@ -1,6 +1,7 @@
 var EMBEDLY_API_KEY;
 var MAX_EMBED_WIDTH;
 var MAX_EMBED_HEIGHT;
+var oembed; // gross
 
 function tinyMCESetup( ed ) {
     /*
@@ -125,26 +126,31 @@ function renderLinkOembed( oembed, description ) {
 
 
 function renderPhotoOembed( oembed ) {
+    var $ = jQuery;
+
     var html = '';
-    html += '<p><img src="' + oembed.url + '" width="460" /></p>';
+    linkUrl = $( '#navis_embed_url' ).val();
+    html += '<p><a href="' + linkUrl + '">';
+    html += '<img src="' + oembed.url + '" width="460" /></a></p>';
     return html;
 }
 
 
 function renderProviderData( oembed ) {
+    var $ = jQuery;
     phtml = '<ul class="embed-metadata">';
     phtml += '<li>Source: <a href="' + oembed.url + '">' + 
             oembed.provider_name + '</a></li>';
 
-    if ( jQuery( '#via_name' ).val() ) { 
+    if ( $( '#via_name' ).val() ) { 
         phtml += '<li>Via: <em>';
 
-        if ( jQuery( '#via_url' ).val() )
-            phtml += '<a href="' + jQuery( '#via_url' ).val() + '">';
+        if ( $( '#via_url' ).val() )
+            phtml += '<a href="' + $( '#via_url' ).val() + '">';
 
-        phtml += jQuery( '#via_name' ).val();
+        phtml += $( '#via_name' ).val();
 
-        if ( jQuery( '#via_url' ).val() ) 
+        if ( $( '#via_url' ).val() ) 
             phtml += '</a>';
 
         phtml += '</li>';
@@ -153,6 +159,7 @@ function renderProviderData( oembed ) {
    
     return phtml;
 }
+
 
 function getOembedData() {
     var $ = jQuery; 
@@ -167,6 +174,7 @@ function getOembedData() {
     return oembed;
 }
 
+
 function saveOembedData( oembed ) {
     var $ = jQuery; 
     
@@ -177,10 +185,11 @@ function saveOembedData( oembed ) {
     });
 }
 
+
 jQuery( document ).ready( function() {
     var $ = jQuery;
 
-    var oembed = getOembedData();
+    oembed = getOembedData();
     if ( ! $.isEmptyObject( oembed ) ) {
         renderOembed( oembed );
     }
@@ -202,10 +211,11 @@ jQuery( document ).ready( function() {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
         */
-        $.embedly( url, opts, function( oembed, dict ) {
+        $.embedly( url, opts, function( oembedResponse, dict ) {
             // Set the title if it's not already set.
             // Focus & blur are necessary to wipe out 
             // default "Enter title here" text
+            oembed = oembedResponse; // gross
             if ( ! $( '#title' ).val() ) {
                 title = '"' + oembed.title + '"';
                 $( '#title' ).val( title );
@@ -218,20 +228,19 @@ jQuery( document ).ready( function() {
         });
     }
 
-    /*
-    if ( $( '#navis_embed_url' ).val() ) {
-        var url = $( '#navis_embed_url' ).val();
-        handleEmbedly( url );
-    }
-    */
-
     if ( $( '#leadintext' ).val() ) {
         $( '#leadinPreviewArea' ).html( $( '#leadintext' ).val() );
     }
+    /*
+    $( '#leadintext' ).keyup( function() {
+        $( '#leadinPreviewArea' ).html( $(this).val() );
+    });
+    */
 
     $( '#submitUrl' ).click( function( evt ) {
         var url = $( '#navis_embed_url' ).val();
         handleEmbedly( url );
+        return false; // to prevent the form from trying to submit
     });
 
     $( '#edButtonPreview' ).click( function() {
@@ -245,15 +254,11 @@ jQuery( document ).ready( function() {
     $( '#post' ).submit( function( evt ) {
         $( '#embedlyarea' ).val( $( '#embedlyPreviewArea' ).html() );
     });
+    
     $( '#via_name' ).blur( function( evt ) {
         renderOembed( oembed );
     });
     $( '#via_url' ).blur( function( evt ) {
         renderOembed( oembed );
     });
-    /*
-    $( '#leadintext' ).keyup( function() {
-        $( '#leadinPreviewArea' ).html( $(this).val() );
-    });
-    */
 });
