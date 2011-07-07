@@ -13,10 +13,6 @@ border-bottom: 1px solid #ddd;
 display: none;
 }
 
-.embed-metadata {
-background: transparent url(../img/jiffy-icon.png) no-repeat;
-}
-
 #content .meta-gestures {
 width: 100%;
 }
@@ -32,6 +28,15 @@ min-height: 20px;
 
 .embed-metadata li {
 margin-left: 35px;
+}
+
+.embed-metadata .jiffy-icon {
+margin-top: 3px;
+margin-left: 0;
+float: left;
+width: 16px;
+height: 16px;
+overflow: hidden;
 }
 
 .embedded-object {
