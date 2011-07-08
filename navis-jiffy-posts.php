@@ -165,7 +165,7 @@ class Navis_Jiffy_Posts {
 
     function init_tiny_mce( $initArray ) {
         if ( 'jiffypost' != get_post_type() )
-            return;
+            return $initArray;
 
         $initArray[ 'editor_selector' ] = 'leadintext';
         $initArray[ 'setup' ] = 'tinyMCESetup';
