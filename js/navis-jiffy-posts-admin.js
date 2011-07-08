@@ -121,6 +121,7 @@ function renderLinkOembed( oembed, description ) {
     html += '<blockquote><p id="embedlyDescription">';
     html += ( description ) ? description : oembed.description;
     html += '</p></blockquote>';
+    html += '<p class="jiffy-sourceurl">&#8212; <a href="#">npr.org</a></p>';
     return html;
 }
 
@@ -139,7 +140,7 @@ function renderPhotoOembed( oembed ) {
 function renderProviderData( oembed ) {
     var $ = jQuery;
     phtml = '<ul class="embed-metadata">';
-    phtml = '<li class="jiffy-icon"><img src="http://wamu.argoproject.org/wp-content/plugins/navis-jiffy-posts/img/jiffy-icon.png" alt="jiffy-icon" width="16" height="16" /></li>';
+    phtml += '<li class="jiffy-icon"><img src="http://wamu.argoproject.org/wp-content/plugins/navis-jiffy-posts/img/jiffy-icon.png" alt="jiffy-icon" width="16" height="16" /></li>';
     phtml += '<li>Source: <a href="' + oembed.url + '">' + 
             oembed.provider_name + '</a></li>';
 
