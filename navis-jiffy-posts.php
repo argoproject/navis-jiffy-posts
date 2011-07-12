@@ -193,14 +193,22 @@ class Navis_Jiffy_Posts {
             array( &$this, 'embed_preview_box' ), 'jiffypost',
             'normal', 'high'
         );
+
+        add_meta_box( 'navisjiffybookmarklet', 'Jiffy Post Bookmarklet',
+            array( &$this, 'bookmarklet_box' ), 'jiffypost',
+            'side', 'low'
+        );
     }
 
 
     function embed_url_box( $post ) {
         $navis_embed_url = get_post_meta( $post->ID, '_navis_embed_url', true );
     ?>
-        URL: <input type="text" name="navis_embed_url" id="navis_embed_url" value="<?php echo $navis_embed_url; ?>" style="width: 80%;" />
+        URL: <input type="text" name="navis_embed_url" id="navis_embed_url" value="<?php echo $navis_embed_url; ?>" style="width: 75%;" />
         <input type="button" class="button" id="submitUrl" value="Embed" label="Embed" />
+        <div id="activityIndicator" style="display: none; height: 30px; width: 16px; vertical-align: middle; padding-left: 5px;">
+            <img src="<?php echo admin_url( 'images/wpspin_light.gif' ); ?>" />
+        </div>
     <?php
     }
 
@@ -259,6 +267,30 @@ class Navis_Jiffy_Posts {
                 );
             }
         }
+    }
+
+
+    function bookmarklet_box( $post_id ) {
+        // Borrowed from get_shortcut_link() in wp-includes/link-template.php
+	$link = "javascript:
+			var d=document,
+			w=window,
+			e=w.getSelection,
+			k=d.getSelection,
+			x=d.selection,
+			s=(e?e():(k)?k():(x?x.createRange().text:0)),
+			f='" . admin_url('post-new.php') . "',
+			l=d.location,
+			e=encodeURIComponent,
+			u=f+'?post_type=jiffypost&u='+e(l.href)+'&t='+e(d.title)+'&s='+e(s)+'&v=1';
+			a=function(){if(!w.open(u,'t','toolbar=1,resizable=1,scrollbars=1,status=1,width=1020,height=640'))l.href=u;};
+			if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0); else a();
+			void(0)";
+
+	$link = str_replace( array("\r", "\n", "\t"),  '', $link );
+
+        echo "Add add the bookmarklet, drag the following link to your browser's toolbar: ";
+        printf( '<a href="%s" id="jiffyBookmarklet" title="Jiffy This">Jiffy This</a>', $link );
     }
 
 

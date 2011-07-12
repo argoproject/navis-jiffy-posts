@@ -3,6 +3,16 @@ var MAX_EMBED_WIDTH;
 var MAX_EMBED_HEIGHT;
 var oembed; // gross
 
+/**
+ * Courtesy of
+ * http://osc.co.cr/2011/07/wtf-jquery-provides-no-way-to-access-url-parameters-seriously/
+ */
+jQuery.urlParam = function(name){
+    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    return results[1] || 0;
+}
+
+
 function tinyMCESetup( ed ) {
     /*
     onInit.add( function(ed) {
@@ -218,11 +228,13 @@ jQuery( document ).ready( function() {
         if ( EMBEDLY_API_KEY ) {
             opts[ 'key' ] = EMBEDLY_API_KEY;
         }
+        /*
+         * XXX: hardcoding embed widths for now
+         */
         opts[ 'maxWidth' ]  = 460;
         opts[ 'maxHeight' ] = 640;
 
         /*
-         * XXX: hardcoding embed widths for now
         if ( MAX_EMBED_WIDTH ) {
             opts[ 'maxWidth' ] = MAX_EMBED_WIDTH;
         }
@@ -230,6 +242,7 @@ jQuery( document ).ready( function() {
             opts[ 'maxHeight' ] = MAX_EMBED_HEIGHT;
         }
         */
+        //$( '#activityIndicator' ).show();
         $.embedly( url, opts, function( oembedResponse, dict ) {
             // Set the title if it's not already set.
             // Focus & blur are necessary to wipe out 
@@ -245,6 +258,7 @@ jQuery( document ).ready( function() {
             renderOembed( oembed );
             saveOembedData( oembed );
         });
+        //$( '#activityIndicator' ).hide();
     }
 
     if ( $( '#leadintext' ).val() ) {
@@ -280,4 +294,24 @@ jQuery( document ).ready( function() {
     $( '#via_url' ).blur( function( evt ) {
         renderOembed( oembed );
     });
+
+    // Support for bookmarklet
+    $( '#jiffyBookmarklet' ).click( function( evt ) {
+        alert( "Don't click me! Drag me to your toolbar." );
+        return false;
+    });
+
+    if ( $.urlParam( 's' ) ) {
+        var description = decodeURIComponent( $.urlParam( 's' ) );
+
+        if ( description.length )
+            $( '#custom_description' ).val( description );
+    }
+
+    if ( $.urlParam( 'u' ) ) {
+        var url = decodeURIComponent( $.urlParam( 'u' ) );
+
+        $( '#navis_embed_url' ).val( url );
+        handleEmbedly( url );
+    }
 });
