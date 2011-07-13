@@ -7,9 +7,9 @@ var oembed; // gross
  * Courtesy of
  * http://osc.co.cr/2011/07/wtf-jquery-provides-no-way-to-access-url-parameters-seriously/
  */
-jQuery.urlParam = function(name){
-    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    return results[1] || 0;
+jQuery.urlParam = function( name ) {
+    var results = new RegExp( '[\\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+    return ( results && results.length > 0 ) ? results[ 1 ] : null;
 }
 
 
@@ -32,6 +32,7 @@ function tinyMCESetup( ed ) {
     } );
     */
 }
+
 
 function renderOembed( oembed ) {
     var $ = jQuery;
