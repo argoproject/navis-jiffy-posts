@@ -162,7 +162,10 @@ function urlToDomain( url ) {
 
 function renderProviderData( oembed ) {
     var $ = jQuery;
-    var domain = urlToDomain( oembed.url );
+
+    // Not all oembed responses have a URL property; fall back to what the
+    // blogger provided.
+    var domain = urlToDomain( ( oembed.url ) ? oembed.url : $( '#navis_embed_url' ).val() );
 
     phtml = '<ul class="embed-metadata">';
     phtml += '<li class="jiffy-icon">';
@@ -255,6 +258,7 @@ jQuery( document ).ready( function() {
                 $( '#title' ).blur();
             }
 
+            //alert( JSON.stringify( oembed ) );
             renderOembed( oembed );
             saveOembedData( oembed );
         });
