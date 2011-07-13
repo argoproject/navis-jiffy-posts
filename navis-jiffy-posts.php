@@ -322,6 +322,9 @@ class Navis_Jiffy_Posts {
 
 
     function insert_post_content( $data ) {
+        if ( 'jiffypost' != get_post_type() )
+            return $data;
+
         $content = '';
         if ( isset( $_POST[ 'leadintext' ] ) ) {
             $content = '<p>' . $_POST[ 'leadintext' ] . '</p>';
