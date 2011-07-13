@@ -71,8 +71,6 @@ class Navis_Jiffy_Posts {
 
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
 
-        add_filter( 'tiny_mce_before_init', array( &$this, 'init_tiny_mce' ) );
-
         add_action( 'save_post', array( &$this, 'save_post' ) );
 
         add_filter( 'wp_insert_post_data', 
@@ -163,16 +161,6 @@ class Navis_Jiffy_Posts {
     }
 
 
-    function init_tiny_mce( $initArray ) {
-        if ( 'jiffypost' != get_post_type() )
-            return $initArray;
-
-        $initArray[ 'editor_selector' ] = 'leadintext';
-        $initArray[ 'setup' ] = 'tinyMCESetup';
-        return $initArray;
-    }
-
-
     function add_post_meta_boxes() {
         add_meta_box( 'navisembedurl', 'Embed a URL', 
             array( &$this, 'embed_url_box' ), 'jiffypost', 
@@ -215,6 +203,14 @@ class Navis_Jiffy_Posts {
 
     function embed_leadin_box( $post ) {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
+
+        wp_tiny_mce( true,
+            array(
+                'editor_selector' => 'leadintext',
+                'setup' => 'tinyMCESetup',
+            )
+        );
+
     ?>
         <p align="right">
             <a id="edButtonHTML" class="">HTML</a>
