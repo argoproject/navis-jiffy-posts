@@ -285,7 +285,7 @@ class Navis_Jiffy_Posts {
 
 	$link = str_replace( array("\r", "\n", "\t"),  '', $link );
 
-        echo "Add add the bookmarklet, drag the following link to your browser's toolbar: ";
+        echo "To add the bookmarklet, drag the following link to your browser's toolbar: ";
         printf( '<a href="%s" id="jiffyBookmarklet" title="Jiffy This">Jiffy This</a>', $link );
     }
 
