@@ -99,6 +99,7 @@ class Navis_Jiffy_Posts {
             'public' => true,
             'menu_position' => 6,
             'taxonomies' => array(),
+            'rewrite' => array( 'slug' => 'jp' ),
         ) );
     }
 
