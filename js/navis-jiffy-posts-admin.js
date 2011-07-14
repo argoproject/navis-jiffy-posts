@@ -49,11 +49,11 @@ function renderOembed( oembed ) {
     $( '#provider_url' ).val( oembed.provider_url );
 
     // Make it possible to remove the image
-    if ( $( '#embedlyThumbnail' ) ) {
-        $( '#embedlyThumbnail' ).hover( function() {
+    if ( $( '.embedlyThumbnail' ) ) {
+        $( '.embedlyThumbnail' ).hover( function() {
             $( '#remove-image-icon' ).addClass( 'jiffy-remove' );
             $( '#remove-image-icon' ).click( function( evt ) {
-                $( '#embedlyThumbnail' ).detach();
+                $( '.embedlyThumbnail' ).detach();
                 $( '#remove-image-icon' ).detach();
                 $( '#hide_image' ).val( '1' );
                 return false;
@@ -66,8 +66,8 @@ function renderOembed( oembed ) {
     }
     
     // Make the description editable
-    if ( $( '#embedlyDescription' ) ) {
-        $( '#embedlyDescription' ).editable( function( value, settings ) {
+    if ( $( '.embedlyDescription' ) ) {
+        $( '.embedlyDescription' ).editable( function( value, settings ) {
             return value;
 }, {
             type: 'textarea',
@@ -126,10 +126,10 @@ function renderLinkOembed( oembed, description ) {
     var html = '';
     if ( oembed.thumbnail_url && $( '#hide_image' ).val() != 1 ) {
         html += '<a href="#" id="remove-image-icon"></a>';
-        html += '<a id="embedlyThumbnailLink" href="' + oembed.url + '">';
-        html += '<img id="embedlyThumbnail" src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
+        html += '<a class="embedlyThumbnailLink" href="' + oembed.url + '">';
+        html += '<img class="embedlyThumbnail" src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
     }
-    html += '<blockquote><p id="embedlyDescription">';
+    html += '<blockquote><p class="embedlyDescription">';
     html += ( description ) ? description : oembed.description;
     html += '</p></blockquote>';
 
@@ -290,6 +290,10 @@ jQuery( document ).ready( function() {
     });
 
     $( '#post' ).submit( function( evt ) {
+        // Clean up the HTML that will get saved and shared with users
+        $( '.embedlyDescription' ).removeAttr( 'title' );
+        $( '#remove-image-icon' ).remove();
+
         $( '#embedlyarea' ).val( $( '#embedlyPreviewArea' ).html() );
     });
     
