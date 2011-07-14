@@ -71,6 +71,11 @@ class Navis_Jiffy_Posts {
 
         add_action( 'admin_menu', array( &$this, 'add_post_meta_boxes' ) );
 
+        add_filter( 
+            'teeny_mce_buttons', 
+            array( &$this, 'modify_teeny_mce_buttons' ) 
+        );
+
         add_action( 'save_post', array( &$this, 'save_post' ) );
 
         add_filter( 'wp_insert_post_data', 
@@ -288,6 +293,15 @@ class Navis_Jiffy_Posts {
 
         echo "To add the bookmarklet, drag the following link to your browser's toolbar: ";
         printf( '<a href="%s" id="jiffyBookmarklet" title="Jiffy This">Jiffy This</a>', $link );
+    }
+
+
+    function modify_teeny_mce_buttons( $buttons ) {
+        if ( 'jiffypost' != get_post_type() )
+            return $buttons;
+
+        return array( 'bold', 'italic', 'underline', 'strikethrough', 
+            'link', 'unlink' );
     }
 
 
