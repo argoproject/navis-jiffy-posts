@@ -127,7 +127,7 @@ function renderLinkOembed( oembed, description ) {
     if ( oembed.thumbnail_url && $( '#hide_image' ).val() != 1 ) {
         html += '<a href="#" id="remove-image-icon"></a>';
         html += '<a class="embedlyThumbnailLink" href="' + oembed.url + '">';
-        html += '<img class="embedlyThumbnail" src="' + oembed.thumbnail_url + '" height="60" width="60" /></a>';
+        html += '<img class="embedlyThumbnail" src="' + oembed.thumbnail_url + '" width="100" /></a>';
     }
     html += '<blockquote><p class="embedlyDescription">';
     html += ( description ) ? description : oembed.description;
@@ -136,7 +136,7 @@ function renderLinkOembed( oembed, description ) {
     var domain = urlToDomain( oembed.url );
 
     if ( domain ) {
-        html += '<p class="jiffy-sourceurl">&#8212; <a href="' + oembed.url + '">' + domain + '</a></p>';
+        html += '<p class="jiffy-sourceurl">Read more at: <a href="' + oembed.url + '">' + domain + '</a></p>';
     }
 
     return html;
@@ -172,7 +172,7 @@ function renderProviderData( oembed ) {
     phtml += '<li class="jiffy-icon">';
     phtml += '<img src="http://s2.googleusercontent.com/s2/favicons?domain=' + 
         domain + '" alt="jiffy-icon" width="16" height="16" /></li>';
-    phtml += '<li>Source: <a href="' + oembed.url + '">' + 
+    phtml += '<li class="jiffy-source">Source: <a href="' + oembed.url + '">' + 
             oembed.provider_name + '</a></li>';
 
     if ( $( '#via_name' ).val() ) { 

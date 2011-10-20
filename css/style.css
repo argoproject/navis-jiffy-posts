@@ -44,6 +44,10 @@ height: 16px;
 overflow: hidden;
 }
 
+.jiffy-source a {
+text-transform: uppercase;
+}
+
 .embedded-object {
 margin-left: 160px;
 margin-bottom: 30px;
@@ -64,8 +68,5 @@ border: 1px solid #ddd;
 font-family: helvetica, arial, sans-serif;
 font-size: 11px;
 font-style: italic;
-}
-
-#content .jiffy-sourceurl a {
-font-weight: normal;
+font-weight: bold;
 }
