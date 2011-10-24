@@ -112,7 +112,7 @@ class Navis_Jiffy_Posts {
     function add_stylesheet() {
         $style_css = plugins_url( 'css/style.css', __FILE__ );
         wp_enqueue_style( 
-            'navis-jiffy-post-styles', $style_css, array(), '1.0'
+            'navis-jiffy-post-styles', $style_css, array(), '1.1'
         );
     }
 
@@ -151,7 +151,7 @@ class Navis_Jiffy_Posts {
         // Our JS routines
         $oursrc = plugins_url( 'js/navis-jiffy-posts-admin.js', __FILE__ );
         wp_enqueue_script( 'navis-jiffy-posts-admin', $oursrc, 
-            array( 'jquery-embedly', 'jquery-jeditable' ), '0.28' 
+            array( 'jquery-embedly', 'jquery-jeditable' ), '0.29' 
         );
     }
 
