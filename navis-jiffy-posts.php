@@ -300,8 +300,8 @@ class Navis_Jiffy_Posts {
         if ( 'jiffypost' != get_post_type() )
             return $buttons;
 
-        return array( 'bold', 'italic', 'underline', 'strikethrough', 
-            'link', 'unlink' );
+        return array( 'bold', 'italic', 'underline', 'strikethrough' ); 
+            //'link', 'unlink' );
     }
 
 
