@@ -3,7 +3,7 @@
  * Plugin Name: Navis Jiffy Posts
  * Description: Makes it easy to quickly create a post from a URL
  * Version: 0.1
- * Author: Marc Lavallee 
+ * Author: Argo Project
  * License: GPLv2
 */
 /*
@@ -400,17 +400,17 @@ class Navis_Jiffy_Posts {
         add_options_page( 'Jiffy Posts', 'Jiffy Posts', 'manage_options',
                           'navis_jp', array( &$this, 'options_page' ) );
     }
-
-
+    
     function options_page() {
     ?>
         <div>
-            <h2>Navis Jiffy Posts</h2>
+            <h2>Navis Jiffy Post</h2>
+            <p>If you don't have an embed.ly API key, visit <a href="http://embed.ly/">embed.ly</a> to sign up for a free key.</p>
             <form action="options.php" method="post">
                 <?php settings_fields( 'navis_jp' ); ?>
                 <?php do_settings_sections( 'navis_jp' ); ?>
 
-                <input name="Submit" type="submit" value="Save Changes" />
+                <input name="Submit" type="submit" value="Save Changes" style="margin: 20px 0 0 10px;"/>
             </form>
         </div>
     <?php
@@ -418,4 +418,16 @@ class Navis_Jiffy_Posts {
 
 }
 
+// check to see if the embedly API key has been set
+function jiffy_notice_embedly() {
+		echo '<div class="error">';
+		echo '<p>', sprintf(__('Please enter your <a href="%s">embedly API key</a> to create a Jiffy Post', 'argo'), admin_url('options-general.php?page=navis_jp')), '</p>';
+		echo '</div>';        
+}
+
+if (get_option('embedly_api_key') == null) { 
+	add_action('admin_notices', 'jiffy_notice_embedly');
+}
+
 new Navis_Jiffy_Posts;
+

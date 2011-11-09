@@ -49,22 +49,16 @@ function renderOembed( oembed ) {
     $( '#provider_url' ).val( oembed.provider_url );
 
     // Make it possible to remove the image
-    if ( $( '.embedlyThumbnail' ) ) {
-        $( '.embedlyThumbnail' ).hover( function() {
-            $( '#remove-image-icon' ).addClass( 'jiffy-remove' );
-            $( '#remove-image-icon' ).click( function( evt ) {
-                $( '.embedlyThumbnail' ).detach();
-                $( '#remove-image-icon' ).detach();
-                $( '#hide_image' ).val( '1' );
-                return false;
-            });
-        },
-        function () {
-            //$( '#remove-image-icon' ).removeClass( 'jiffy-remove' );
-            //$( '#remove-image-icon' ).unbind( 'click', 'removeImage' );
-        });
-    }
-    
+    if ( $( '.embedlyThumbnail' ) ) { 
+		$( '#remove-image-icon' ).addClass( 'jiffy-remove' );
+		$( '#remove-image-icon' ).click( function( evt ) {
+			$( '.embedlyThumbnail' ).detach();
+			$( '#remove-image-icon' ).detach();
+			$( '#hide_image' ).val( '1' );
+				return false;
+			});
+	}
+
     // Make the description editable
     if ( $( '.embedlyDescription' ) ) {
         $( '.embedlyDescription' ).editable( function( value, settings ) {
