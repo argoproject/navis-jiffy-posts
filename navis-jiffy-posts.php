@@ -418,6 +418,23 @@ class Navis_Jiffy_Posts {
 
 }
 
+// add custom post type to the main loop
+add_filter( 'pre_get_posts', 'add_to_query' );
+
+    function add_to_query( $query ) {
+        // if ( is_home() ) {
+            if( $query->query_vars['suppress_filters'] )
+                return $query;
+            $supported = $query->get( 'post_type' );
+            if ( !$supported || $supported == 'post' )
+                $supported = array( 'post', 'jiffypost' );
+            elseif ( is_array( $supported ) )
+                array_push( $supported, 'jiffypost' );
+            $query->set( 'post_type', $supported );
+            return $query;
+        //}
+    }
+
 // check to see if the embedly API key has been set
 function jiffy_notice_embedly() {
 		echo '<div class="error">';
