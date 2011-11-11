@@ -80,10 +80,10 @@ class Navis_Jiffy_Posts {
 
         add_filter( 'wp_insert_post_data', 
             array( &$this, 'insert_post_content' ) 
-        );
+        );     
+        add_action( 'admin_footer-post.php', array(&$this, 'teeny_mce') );
     }
-
-
+    
     function register_post_type() {
         register_post_type( 'jiffypost', array(
             'labels' => array(
@@ -177,6 +177,8 @@ class Navis_Jiffy_Posts {
             array( &$this, 'embed_leadin_box' ), 'jiffypost', 
             'normal', 'high' 
         );
+        
+        
 
         add_meta_box( 'navisviainfo', 'Via',
             array( &$this, 'via_info_box' ), 'jiffypost',
@@ -209,13 +211,14 @@ class Navis_Jiffy_Posts {
 
     function embed_leadin_box( $post ) {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
-
+		/***
         wp_tiny_mce( true,
             array(
                 'editor_selector' => 'leadintext',
                 'setup' => 'tinyMCESetup',
             )
         );
+        ***/
 
     ?>
         <p align="right">
@@ -300,8 +303,18 @@ class Navis_Jiffy_Posts {
         if ( 'jiffypost' != get_post_type() )
             return $buttons;
 
-        return array( 'bold', 'italic', 'underline', 'strikethrough' ); 
-            //'link', 'unlink' );
+        return array( 'bold', 'italic', 'strikethrough', 'link','unlink' ); 
+    }
+    
+	function teeny_mce() {
+        if ( 'jiffypost' == get_post_type() )
+        wp_tiny_mce( true,
+            array(
+                'editor_selector' => 'leadintext',
+                'setup' => 'tinyMCESetup',
+            )
+        );
+
     }
 
 
@@ -419,21 +432,36 @@ class Navis_Jiffy_Posts {
 }
 
 // add custom post type to the main loop
-add_filter( 'pre_get_posts', 'add_to_query' );
-
-    function add_to_query( $query ) {
-        // if ( is_home() ) {
+add_filter( 'pre_get_posts', 'jp_get_posts' );
+    
+    function jp_get_posts( $query ) {
+	$var = false;
+	if (isset($query->query_vars['suppress_filters'])){
+      $var = $query->query_vars['suppress_filters'];
+	}
+	if ( is_home() && false ==$var ){
+      $query->set( 'post_type', array( 'post', 'jiffypost') );
+    }
+	return $query;
+  }
+  
+      /* function add_to_query( $query ) {
+    	
+        if ( is_home() ) {
             if( $query->query_vars['suppress_filters'] )
                 return $query;
             $supported = $query->get( 'post_type' );
+            
             if ( !$supported || $supported == 'post' )
                 $supported = array( 'post', 'jiffypost' );
+                
             elseif ( is_array( $supported ) )
                 array_push( $supported, 'jiffypost' );
             $query->set( 'post_type', $supported );
+            
             return $query;
-        //}
-    }
+        }
+    } */
 
 // check to see if the embedly API key has been set
 function jiffy_notice_embedly() {
