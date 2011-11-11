@@ -82,7 +82,51 @@ class Navis_Jiffy_Posts {
             array( &$this, 'insert_post_content' ) 
         );     
         add_action( 'admin_footer-post.php', array(&$this, 'teeny_mce') );
+        add_action( 'admin_footer-post-new.php', array(&$this, 'teeny_mce') );
     }
+    
+    function teeny_mce() {
+        if ( 'jiffypost' == get_post_type() )
+        wp_tiny_mce( true,
+            array(
+                'editor_selector' => 'leadintext',
+                'setup' => 'tinyMCESetup',
+            )
+        );
+
+    }
+    
+    /**
+	 * Activation.
+	 * source: https://github.com/mfields/mfields-bookmarks
+	 * When a user activates this plugin the public pages
+	 * for both custom taxonomies and post_types will need
+	 * to be immediately available. To ensure that this happens
+	 * both post_types and taxonomies need to be registered at
+	 * activation so that their rewrite rules will be present
+	 * when new rules are added to the database during flush.
+	 *
+	 * @return     void
+	 * @since      2011-02-20
+	 */
+	static public function activate() {
+		self::register_post_type();
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Deactivation.
+	 * source: https://github.com/mfields/mfields-bookmarks
+	 * When a user chooses to deactivate jiffy posts it is
+	 * important to remove all custom object rewrites from
+	 * the database.
+	 *
+	 * @return     void
+	 * @since      2011-02-20
+	 */
+	static public function deactivate() {
+		flush_rewrite_rules();
+	}
     
     function register_post_type() {
         register_post_type( 'jiffypost', array(
@@ -208,7 +252,7 @@ class Navis_Jiffy_Posts {
     <?php
     }
 
-
+    
     function embed_leadin_box( $post ) {
         $leadintext = get_post_meta( $post->ID, '_leadintext', true );
 		/***
@@ -306,16 +350,7 @@ class Navis_Jiffy_Posts {
         return array( 'bold', 'italic', 'strikethrough', 'link','unlink' ); 
     }
     
-	function teeny_mce() {
-        if ( 'jiffypost' == get_post_type() )
-        wp_tiny_mce( true,
-            array(
-                'editor_selector' => 'leadintext',
-                'setup' => 'tinyMCESetup',
-            )
-        );
-
-    }
+	
 
 
     function save_post( $post_id ) {
@@ -473,6 +508,13 @@ function jiffy_notice_embedly() {
 if (get_option('embedly_api_key') == null) { 
 	add_action('admin_notices', 'jiffy_notice_embedly');
 }
+
+	/* Flush rewrite rules on activation 
+
+	if ( is_admin() && $_GET['activate'] && $_SERVER['SCRIPT_NAME'] == '/wp-admin/plugins.php' ) {
+
+		add_action( 'init', 'flush_rewrite_rules', 12 );
+	} */
 
 new Navis_Jiffy_Posts;
 
