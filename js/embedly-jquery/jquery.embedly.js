@@ -158,6 +158,7 @@
          }).join(',');
          $.ajax({
              url: getUrl(),
+             timeout: 120000,
              dataType: 'jsonp',
              data: getParams(urls),
              success: function(data) {
@@ -177,7 +178,9 @@
                  });
              },
              error: function(){
-              $('#nnavisembedstatus').html("Embed Failed for unknown reason!  Please try again.");
+              $('#activityIndicator').hide();
+                        $('#navisActivityIndicator').removeClass('jiffy-success').addClass('jiffy-error');
+                        $('#navisActivityIndicator .message').html("Embed Failed!  Could not connect to embed.ly.  Please try again.");
               
              }
          });
