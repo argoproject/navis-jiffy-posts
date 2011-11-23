@@ -12,3 +12,5 @@
 }
 
 .jiffy-hidden {display: none;}
+.jiffy-error{color:red}
+.jiffy-success{color:green;}

@@ -270,6 +270,10 @@ jQuery( document ).ready( function() {
     */
 
     $( '#submitUrl' ).click( function( evt ) {
+        $('#navisActivityIndicator').removeClass('jiffy-error').removeClass('jiffy-success')
+        $('#activityIndicator').show();
+        $('#navisActivityIndicator .message').html('Getting URL to embed...');
+        $('#navisActivityIndicator').show();
         var url = $( '#navis_embed_url' ).val();
         handleEmbedly( url );
         return false; // to prevent the form from trying to submit

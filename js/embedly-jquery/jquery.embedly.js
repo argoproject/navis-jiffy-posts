@@ -161,10 +161,24 @@
              dataType: 'jsonp',
              data: getParams(urls),
              success: function(data) {
+
                  return $.each(data,
                  function(index, elem) {
+                      if (elem.type != 'error'){
+                        $('#activityIndicator').hide();
+                        $('#navisActivityIndicator').removeClass('jiffy-error').addClass('jiffy-success');
+                        $('#navisActivityIndicator .message').html("Embed Successful!");
+                      } else if (elem.type == 'error') {
+                        $('#activityIndicator').hide();
+                        $('#navisActivityIndicator').removeClass('jiffy-success').addClass('jiffy-error');
+                        $('#navisActivityIndicator .message').html("Embed Failed!  Please try again.");
+                      }
                      return elem.type != 'error' ? processEmbed(elem, batch[index]) : null;
                  });
+             },
+             error: function(){
+              $('#nnavisembedstatus').html("Embed Failed for unknown reason!  Please try again.");
+              
              }
          });
        }

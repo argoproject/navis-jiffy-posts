@@ -246,8 +246,8 @@ class Navis_Jiffy_Posts {
     ?>
         URL: <input type="text" name="navis_embed_url" id="navis_embed_url" value="<?php echo $navis_embed_url; ?>" style="width: 75%;" />
         <input type="button" class="button" id="submitUrl" value="Embed" label="Embed" />
-        <div id="activityIndicator" style="display: none; height: 30px; width: 16px; vertical-align: middle; padding-left: 5px;">
-            <img src="<?php echo admin_url( 'images/wpspin_light.gif' ); ?>" />
+        <div id="navisActivityIndicator" style="display: none; height: 30px; vertical-align: middle; padding-left: 5px;text-align:center;font-size:18px;vertical-align:middle;margin-top:10px;">
+            <img id='activityIndicator' src="<?php echo admin_url( 'images/wpspin_light.gif' ); ?>"/> <span class='message'></span>
         </div>
     <?php
     }
