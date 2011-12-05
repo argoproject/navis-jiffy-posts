@@ -172,15 +172,15 @@
                       } else if (elem.type == 'error') {
                         $('#activityIndicator').hide();
                         $('#navisActivityIndicator').removeClass('jiffy-success').addClass('jiffy-error');
-                        $('#navisActivityIndicator .message').html("Embed Failed!  Please try again.");
+                        $('#navisActivityIndicator .message').html("Embed Failed! "+elem.error_message+ " Please try again. ");
                       }
                      return elem.type != 'error' ? processEmbed(elem, batch[index]) : null;
                  });
              },
              error: function(){
               $('#activityIndicator').hide();
-                        $('#navisActivityIndicator').removeClass('jiffy-success').addClass('jiffy-error');
-                        $('#navisActivityIndicator .message').html("Embed Failed!  Could not connect to embed.ly.  Please try again.");
+              $('#navisActivityIndicator').removeClass('jiffy-success').addClass('jiffy-error');
+              $('#navisActivityIndicator .message').html("Embed Failed!  Could not connect to embed.ly.  Please try again.");
               
              }
          });
