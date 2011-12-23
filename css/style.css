@@ -18,6 +18,15 @@ border-bottom: 1px solid #ddd;
 display: none;
 }
 
+#content .jiffypost blockquote {
+margin: 0;
+}
+
+#content .jiffypost ul {
+list-style-type: none;
+margin: 0;
+}
+
 #content .meta-gestures {
 width: 100%;
 }
