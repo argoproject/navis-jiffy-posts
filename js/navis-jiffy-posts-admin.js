@@ -231,6 +231,7 @@ jQuery( document ).ready( function() {
          */
         opts[ 'maxWidth' ]  = 460;
         opts[ 'maxHeight' ] = 640;
+        opts[ 'width' ] = '';
 
         /*
         if ( MAX_EMBED_WIDTH ) {
