@@ -467,7 +467,7 @@ class Navis_Jiffy_Posts {
 }
 
 // add custom post type to the main loop
-add_filter( 'pre_get_posts', 'jp_get_posts' );
+// add_filter( 'pre_get_posts', 'jp_get_posts' );
     
     function jp_get_posts( $query ) {
 	$var = false;
