@@ -83,6 +83,10 @@ class Navis_Jiffy_Posts {
         );     
         add_action( 'admin_footer-post.php', array(&$this, 'teeny_mce') );
         add_action( 'admin_footer-post-new.php', array(&$this, 'teeny_mce') );
+        
+        // finally, make sure jiffy posts show up in the loop
+        add_filter( 'pre_get_posts', array(&$this, 'add_to_query') );
+        
     }
     
     function teeny_mce() {
@@ -463,6 +467,24 @@ class Navis_Jiffy_Posts {
         </div>
     <?php
     }
+    
+    function add_to_query( $query ) {
+
+        if ( !is_single() && !is_admin() ) {
+            if ( $query->query_vars['suppress_filters'] )
+                return $query;
+
+            $supported = $query->get( 'post_type' );
+
+            if ( !$supported || $supported == 'post' )
+                $supported = array( 'post', 'jiffypost' );
+
+            elseif ( is_array( $supported ) )
+                array_push( $supported, 'jiffypost' );
+            $query->set( 'post_type', $supported );
+        }
+        return $query;
+    }
 
 }
 
@@ -481,24 +503,6 @@ class Navis_Jiffy_Posts {
   }
 ***/
 
-add_filter('pre_get_posts', 'jp_add_to_query');
-function jp_add_to_query( $query ) {
-
-    if ( !is_single() && !is_admin() ) {
-        if ( $query->query_vars['suppress_filters'] )
-            return $query;
-
-        $supported = $query->get( 'post_type' );
-
-        if ( !$supported || $supported == 'post' )
-            $supported = array( 'post', 'jiffypost' );
-
-        elseif ( is_array( $supported ) )
-            array_push( $supported, 'jiffypost' );
-        $query->set( 'post_type', $supported );
-    }
-    return $query;
-}
 
 // check to see if the embedly API key has been set
 function jiffy_notice_embedly() {
