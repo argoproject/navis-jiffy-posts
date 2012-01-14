@@ -84,9 +84,6 @@ class Navis_Jiffy_Posts {
         add_action( 'admin_footer-post.php', array(&$this, 'teeny_mce') );
         add_action( 'admin_footer-post-new.php', array(&$this, 'teeny_mce') );
         
-        // finally, make sure jiffy posts show up in the loop
-        add_filter( 'pre_get_posts', array(&$this, 'add_to_query') );
-        
     }
     
     function teeny_mce() {
@@ -467,42 +464,8 @@ class Navis_Jiffy_Posts {
         </div>
     <?php
     }
-    
-    function add_to_query( $query ) {
-
-        if ( !is_single() && !is_admin() ) {
-            if ( $query->query_vars['suppress_filters'] )
-                return $query;
-
-            $supported = $query->get( 'post_type' );
-
-            if ( !$supported || $supported == 'post' )
-                $supported = array( 'post', 'jiffypost' );
-
-            elseif ( is_array( $supported ) )
-                array_push( $supported, 'jiffypost' );
-            $query->set( 'post_type', $supported );
-        }
-        return $query;
-    }
 
 }
-
-// add custom post type to the main loop
-//add_filter( 'pre_get_posts', 'jp_get_posts' );
-/***
-    function jp_get_posts( $query ) {
-	$var = false;
-	if (isset($query->query_vars['suppress_filters'])){
-      $var = $query->query_vars['suppress_filters'];
-	}
-	if ( is_home() && false ==$var ){
-      $query->set( 'post_type', array( 'post', 'jiffypost') );
-    }
-	return $query;
-  }
-***/
-
 
 // check to see if the embedly API key has been set
 function jiffy_notice_embedly() {
@@ -521,6 +484,41 @@ if (get_option('embedly_api_key') == null) {
 
 		add_action( 'init', 'flush_rewrite_rules', 12 );
 	} */
+	
+	//http://bajada.net/2010/10/12/custom-post-types-in-the-loop-using-pre_get_posts-refined
+	
+	function ucc_pre_get_posts_filter( $query ) {
+  global $wp_query;
+ 
+  if ( !is_preview() && !is_admin() && !is_singular() && !is_404() ) {
+    if ($query->is_feed) {
+    /* As always, handle your feed post types here. */
+    } else {
+      $my_post_type = get_query_var( 'post_type' );
+      if ( empty( $my_post_type ) ) {
+        $args = array(
+          'public' => true ,
+          '_builtin' => false
+        );
+        $output = 'names';
+        $operator = 'and';
+ 
+        /* Get all custom post types automatically. */
+        $post_types = get_post_types( $args , $output , $operator );
+        /* Or uncomment and edit to explicitly state which post types you want. */
+        // $post_types = array( 'event' , 'location' );
+ 
+        /* Add 'link' and/or 'page' to array() if you want these included:
+         * array( 'post' , 'link' , 'page' ), etc.
+         */
+        $post_types = array_merge( $post_types , array( 'post' ) );
+        $query->set( 'post_type' , $post_types );
+      }
+    }
+  }
+ 
+  return $query;
+}
+add_action( 'pre_get_posts' , 'ucc_pre_get_posts_filter' );
 
 new Navis_Jiffy_Posts;
-
