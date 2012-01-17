@@ -26,9 +26,12 @@
 class Navis_Jiffy_Posts {
     function __construct() {
         add_action( 'init', array( &$this, 'register_post_type' ) );
-
+        
         add_action( 'wp_print_styles', array( &$this, 'add_stylesheet' ) );
         add_filter( 'post_class', array( &$this, 'add_post_class' ) );
+
+        // make sure jiffy posts show up in the loop
+        add_action( 'pre_get_posts', array(&$this, 'add_to_query') );
 
         if ( ! is_admin() )
             return;
@@ -83,10 +86,7 @@ class Navis_Jiffy_Posts {
         );     
         add_action( 'admin_footer-post.php', array(&$this, 'teeny_mce') );
         add_action( 'admin_footer-post-new.php', array(&$this, 'teeny_mce') );
-        
-        // finally, make sure jiffy posts show up in the loop
-        add_filter( 'pre_get_posts', array(&$this, 'add_to_query') );
-        
+                
     }
     
     function teeny_mce() {
@@ -468,20 +468,21 @@ class Navis_Jiffy_Posts {
     <?php
     }
     
-    function add_to_query( $query ) {
-
-        if ( !is_single() && !is_admin() ) {
-            if ( $query->query_vars['suppress_filters'] )
+    function add_to_query( &$query ) {
+        
+        if ( !is_admin() && !is_single() ) {
+            if ( $query->get('suppress_filters') )
                 return $query;
 
             $supported = $query->get( 'post_type' );
-
+            
             if ( !$supported || $supported == 'post' )
                 $supported = array( 'post', 'jiffypost' );
 
             elseif ( is_array( $supported ) )
                 array_push( $supported, 'jiffypost' );
             $query->set( 'post_type', $supported );
+            
         }
         return $query;
     }
