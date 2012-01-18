@@ -468,23 +468,24 @@ class Navis_Jiffy_Posts {
     <?php
     }
     
-    function add_to_query( &$query ) {
+    function add_to_query( $query ) {
         
-        if ( !is_admin() && !is_single() ) {
-            if ( $query->get('suppress_filters') )
-                return $query;
-
-            $supported = $query->get( 'post_type' );
-            
-            if ( !$supported || $supported == 'post' )
-                $supported = array( 'post', 'jiffypost' );
-
-            elseif ( is_array( $supported ) )
-                array_push( $supported, 'jiffypost' );
-            $query->set( 'post_type', $supported );
-            
+        if ( is_admin() || 
+             is_single() || 
+             is_page() || 
+             $query->get('suppress_filters') ) {
+            return;
         }
-        return $query;
+        
+        $supported = $query->get( 'post_type' );
+        
+        if ( !$supported || $supported == 'post' )
+            $supported = array( 'post', 'jiffypost' );
+        
+        elseif ( is_array( $supported ) )
+            array_push( $supported, 'jiffypost' );
+        $query->set( 'post_type', $supported );
+        error_log('$supported = '.print_r($supported, true));            
     }
 
 }
