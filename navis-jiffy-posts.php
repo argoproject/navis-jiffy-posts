@@ -485,7 +485,7 @@ class Navis_Jiffy_Posts {
         elseif ( is_array( $supported ) )
             array_push( $supported, 'jiffypost' );
         $query->set( 'post_type', $supported );
-        error_log('$supported = '.print_r($supported, true));            
+        // error_log('$supported = '.print_r($supported, true));            
     }
 
 }
