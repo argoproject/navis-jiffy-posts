@@ -491,19 +491,20 @@ class Navis_Jiffy_Posts {
 }
 
 // add custom post type to the main loop
-//add_filter( 'pre_get_posts', 'jp_get_posts' );
-/***
-    function jp_get_posts( $query ) {
-	$var = false;
-	if (isset($query->query_vars['suppress_filters'])){
-      $var = $query->query_vars['suppress_filters'];
-	}
-	if ( is_home() && false ==$var ){
-      $query->set( 'post_type', array( 'post', 'jiffypost') );
+add_filter( 'pre_get_posts', 'jp_get_posts' );
+
+  function jp_get_posts( $query ) {
+    if (is_home() || is_tag() || is_category()) {
+      if (isset($query->query_vars['post_type']) && is_array($query->query_vars['post_type'])) {
+        $query->set( 'post_type', array_merge(array('jiffypost' ), $query->query_vars['post_type']) );
+      } elseif (isset($query->query_vars['post_type']) && !is_array($query->query_vars['post_type'])) {
+        $query->set( 'post_type', array('jiffypost', $query->query_vars['post_type']) );
+      } else {
+        $query->set( 'post_type', array('post','jiffypost') );
+      }
     }
-	return $query;
   }
-***/
+
 
 
 // check to see if the embedly API key has been set
@@ -517,12 +518,12 @@ if (get_option('embedly_api_key') == null) {
 	add_action('admin_notices', 'jiffy_notice_embedly');
 }
 
-	/* Flush rewrite rules on activation 
+	 //Flush rewrite rules on activation 
 
-	if ( is_admin() && $_GET['activate'] && $_SERVER['SCRIPT_NAME'] == '/wp-admin/plugins.php' ) {
+	if ( is_admin() && isset($_GET['activate']) && $_SERVER['SCRIPT_NAME'] == '/wp-admin/plugins.php' ) {
 
 		add_action( 'init', 'flush_rewrite_rules', 12 );
-	} */
+	} 
 
 new Navis_Jiffy_Posts;
 
