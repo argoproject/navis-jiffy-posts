@@ -98,7 +98,7 @@
          return _p;
        }
        var getUrl = function(){
-         return typeof settings.key == "string" ? "http://pro.embed.ly/1/oembed" : "http://api.embed.ly/1/oembed";
+         return typeof settings.key == "string" ? "https://pro.embed.ly/1/oembed" : "https://api.embed.ly/1/oembed";
        }
 
        var processEmbed = function(oembed, dict) {
